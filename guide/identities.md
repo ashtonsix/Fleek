@@ -15,3 +15,5 @@ Calling an identity like a function will update it's value.
 > number
 5
 ```
+
+Identities have two properties, `interface` & `value`

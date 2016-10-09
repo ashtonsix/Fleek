@@ -1,0 +1,22 @@
+# Works for binary trees only
+
+let depthFirstSearch <- \(tree, accumulator []), (
+  !tree ? return <- accumulator
+  return <- concat
+    accumulator
+    tree
+    depthFirstSearch tree.left
+    depthFirstSearch tree.right
+)
+
+let breadthFirstSearch <- \(tree, accumulator []), (
+  let queue <- [tree]
+  while \(queue -> length) \(
+    let current <- queue.(-1)
+    @accumulator <-- concat (__, current)
+    current ?
+      @queue <-
+        queue -> \(_. ..-1) -> concat [current.left, current.right]
+  )
+  return accumulator
+)

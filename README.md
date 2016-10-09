@@ -13,7 +13,7 @@ It features a hybrid interface system that balances flexibility & safety, in add
 * Lisp-inspired lists
 * And more...
 
-The following documents are available:
+The following documentation is available:
 
 * Guide - everything you need to use Fleek
 * Reference - list of all operators & functions
@@ -26,7 +26,7 @@ Here is a simple counter. Clicking the buttons updates the value & re-renders th
 
 ```fl
 import {querySelector, mount} from '@fleek/dom'
-import {div, button} from '@fleek/tags'
+importSyntax {tags} from '@fleek/dom'
 
 : Stream (Number)
 let reducer <- ${0}

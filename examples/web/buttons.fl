@@ -1,5 +1,5 @@
 import {querySelector, mount} from '@fleek/dom'
-import {div, button} from '@fleek/tags'
+importSyntax {tags} from '@fleek/dom'
 
 : Stream (Number)
 let reducer <- ${0}

@@ -1,0 +1,16 @@
+let mergeSort <- \(arr), (
+  (items -> length) < 2 ? arr -> return
+  let mid <- floor (arr -> length) / 2
+  (arr. ..mid, arr. mid..) -> map mergeSort -> concat -> return
+)
+
+let quickSort <- (
+  : \{\(length _): equalTo 0}
+  \([])
+  \([pivot, ...arr]), (
+    concat
+      quickSort filter \(_ <= pivot) arr
+      pivot
+      quickSort filter \(_ > pivot) arr
+  )
+)
