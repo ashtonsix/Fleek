@@ -1,0 +1,23 @@
+import {querySelector, mount} from '@fleek/dom'
+import {div, button} from '@fleek/tags'
+
+: Stream (Number)
+let reducer <- ${0}
+
+: Number => Element
+let Counter <- \(state), (
+  div
+    button ({onClick: \($reducer <-- \(_ - 1))}, `-`)
+    div state
+    button ({onClick: \($reducer <-- \(_ + 1))}, `+`)
+)
+
+: Element => ()
+let render <- \(view), (
+  mount
+    querySelector `body`
+    view
+)
+
+: Stream (Number => ())
+reducer -> Counter -> render

@@ -1,0 +1,89 @@
+import {querySelector, mount} from '@fleek/dom'
+import {div, button, input, span} from '@fleek/tags'
+
+let combineReducers <- \(reducers, state, action), (
+  reduce
+    \(newState, reducer, key), (
+      @newState.(key) <- reducer state.(key) action
+      return <- newState
+    )
+    {}
+    reducers
+)
+
+let createReducer <- \(initialState, actionHandlers, state, action), (
+  let reducer <- switch
+    action.type
+    actionHandlers
+    \(state initialState), (state)
+  return <- reducer state action
+)
+
+let actions <- ${}
+let state <- ${}
+let reducer <- combineReducers {
+  todos: createReducer [] {
+    ADD_TODO: \(state, {payload}), (state ..:{value: payload, complete: false}:)
+    REMOVE_TODO: \(state, {payload}), (state ..payload::payload + 1..)
+    TOGGLE_TODO: \(state, {payload}), (
+      let todo <-
+        state.(payload) -> \({value: _.value, complete: !_.complete})
+      return <- (state ..payload:todo:payload + 1..)
+    )
+  }
+  filterType: createReducer 'all' {
+    CHANGE_FILTER: \(state, {payload}), (payload)
+  }
+}
+
+let dispatch <-
+  actions -> \({type: _0, payload: _1) -> \(state, _) -> reducer $> state
+
+$state <- dispatch 'INIT' ()
+
+let Todo <- \({value, complete, index}), (
+  div
+    input {
+      type: 'checkbox'
+      onChange: \(dispatch 'TOGGLE_TODO' index)
+    }
+    span {(!todo.done ? 'style'): {textDecoration: 'line-through'}} todo.value
+    button {
+      onClick: \(dispatch 'REMOVE_TODO' index)
+    } 'Delete'
+)
+
+let TodoList \({todos, filterType}), (
+  @todos <-
+    todos ->
+    filter \(todo), (
+      switch
+        filterType
+        {
+          complete: \(todo.complete)
+          incomplete: \(!todo.complete)
+        }
+        \(true)
+    ) ->
+    map \(todo, index), ({...todo, index}) ->
+    map Todo
+  return <-
+    div
+      input {
+        placeholder: 'What needs to be done?',
+        onKeyDown: \(_.keyCode == 13 ? dispatch 'ADD_TODO' _.target.value),
+      }
+      todos
+      select {onChange: \(dispatch 'CHANGE_FILTER' _.target.value)}
+        option {value: 'all'} 'All'
+        option {value: 'complete'} 'Complete'
+        option {value: 'incomplete'} 'Incomplete'
+)
+
+let render <- \(state), (
+  mount
+    querySelector `body`
+    TodoList state
+)
+
+state -> render

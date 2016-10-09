@@ -18,6 +18,7 @@ The following documents are available:
 * Guide - everything you need to use Fleek
 * Reference - list of all operators & functions
 * Specification - comprehensive test suite
+* Examples
 
 ## Quick Sample
 
@@ -28,14 +29,14 @@ import {querySelector, mount} from '@fleek/dom'
 import {div, button} from '@fleek/tags'
 
 : Stream (Number)
-let state <- ${0}
+let reducer <- ${0}
 
 : Number => Element
-let Counter <- \(value), (
+let Counter <- \(state), (
   div
-    button ({onClick: \($state <-- \(_ - 1))}, `-`)
-    div value
-    button ({onClick: \($state <-- \(_ + 1))}, `+`)
+    button ({onClick: \($reducer <-- \(_ - 1))}, `-`)
+    div state
+    button ({onClick: \($reducer <-- \(_ + 1))}, `+`)
 )
 
 : Element => ()
@@ -46,7 +47,7 @@ let render <- \(view), (
 )
 
 : Stream (Number => ())
-state -> Counter -> render
+reducer -> Counter -> render
 ```
 
 ## Inspirations
