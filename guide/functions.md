@@ -97,8 +97,8 @@ f0 (a00, a01) -> f1 (a10)   # f1 (a10, f0 (a00, a01))
 Flow left `<-` does nothing, but has low precedence - use it to ensure everything to the right is evaluated first.
 
 ```fl
-f1 a10 f0 a00 a01    # f1 (a10, f0, a00, a01)
-f1 a10 <- f0 a00 a01 # f1 (a10, f0 (a00, a01))
+f1 a10 a00 a01 -> f0    # f0 (f1 (a10, a00, a01))
+f1 a10 <- a00 a01 -> f0 # f1 (a10, f0 (a00, a01))
 ```
 
 A sequence of functions linked with flow operators is called a "chain".
