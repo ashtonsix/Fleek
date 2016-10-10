@@ -148,17 +148,13 @@ collides
 
 ## Default interfaces
 
-Fleek has an interface for every type in addition to: `Float`, `Integer`, `Number`, `Any`, `Empty`, `Maybe` & `Matrix`.
+Fleek has an interface for every [type](./types.md) in addition to: `Any`, `Empty` & `Matrix`.
 
-* `Float` contains `Float32` & `Float64`
-* `Integer` contains `Int8`, `Int16` & `Int32`
-* `Number` contains `Float` & `Integer`. Every `Number` value supports the same operators & functions
 * `Any` matches anything
 * `Empty` matches the empty list only
-* `Maybe` matches either `Empty` or any other interface (passed as argument)
 * `Matrix` is detailed inside the [matrix guide](./matrices.md)
 
-Every interface is wrapped with `Maybe` by default. This makes static analysis much easier & keeps your application flexible. You can explicitly disallow empty lists, this is *not* advisable in the general case.
+Every interface also accepts the empty list by default. This makes static analysis much easier & keeps your application flexible. You can explicitly disallow empty lists, this is *not* advisable in the general case.
 
 ```fl
 : \{Any, not Empty}

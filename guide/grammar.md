@@ -67,22 +67,29 @@ switch
 
 ## Modules
 
+Every export requires an explicit [interface](./interfaces.md)
+
 ```fl
 # math.fl
+: (Number, Number) => Number
 let add <- \(_0 + _1)
+
+: (Number, Number) => Number
 let multiply <- \(_0 * _1)
+
+: Map
 let math <- {add, multiply}
 
 export math, {add, multiply}
 
 # index.fl
-import math {add multiply} from ./math
+import math, {add, multiply} from ./math
 
 math.add 4 5 # 9
 multiply 4 5 # 20
 ```
 
-Operators & contexts use `importSyntax` & `exportSyntax`
+`exportSyntax` can export operators, contexts & multiple functions per namespace (via lists)
 
 ```fl
 # math.fl
@@ -98,10 +105,10 @@ let math <- (flipSign, inverse)
 exportSyntax math
 
 # index.fl
-import math from ./math
+importSyntax math from ./math
 
-5' # 0.2
 ~5 # -5
+5' # 0.2
 ```
 
 The module system looks in one of three locations depending on usage

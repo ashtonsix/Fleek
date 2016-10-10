@@ -11,6 +11,7 @@ It features a hybrid interface system that balances flexibility & safety, in add
 * High-performance matrices
 * Macro-based operators & contexts
 * Lisp-inspired lists
+* Distributed runtime
 * And more...
 
 The following documentation is available:

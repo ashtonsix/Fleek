@@ -207,7 +207,7 @@ During runtime programs "collapse" expression-by-expression, from right-to-left.
   3
     4 5
   6
-# == (1 (2, 3 (4 5), 6))
+# == (1 (2, 3 (4, 5), 6))
 
 let number <- 4 * 5 + 6 / 3
 # == (let (number, + (* (4, 5), / (6, 3))))
