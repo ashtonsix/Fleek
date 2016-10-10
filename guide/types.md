@@ -3,7 +3,7 @@
 Fleek contains the following types:
 
 * Covered in this guide: `Number`, `String`, `Array`, `Map` & `List`
-* Covered in other guides: `Identity`, `Range`, `Stream`, `Interface`, `Function`, `Operator` & `Transaction`
+* Covered in other guides: `Identity`, `Range`, `Placeholder`, `Stream`, `Interface`, `Function`, `Operator` & `Transaction`
 
 All data is immutable.
 
@@ -158,7 +158,7 @@ Maps associate values with keys.
 ```fl
 # Creation
 
-let student <- {age: 9, name: 'Arthur'}         # @student
+let student <- {age: 9, ('name'): 'Arthur'}     # @student
 student == fromPairs ['age' 9; 'name' 'Arthur'] # 1
 
 # Access
