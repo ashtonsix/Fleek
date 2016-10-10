@@ -1,6 +1,9 @@
-# Data Types
+# Types
 
-Fleek contains the following data types: `Number`, `String`, `Array`, `Map` & `List`.
+Fleek contains the following types:
+
+* Covered in this guide: `Number`, `String`, `Array`, `Map` & `List`
+* Covered in other guides: `Identity`, `Range`, `Stream`, `Interface`, `Function`, `Operator` & `Transaction`
 
 All data is immutable.
 
@@ -43,8 +46,8 @@ false    # 0
 ```fl
 # Single '', or double "" quotes.
 
-'Hello' # 'Hello'
-"world" # 'world!'
+'Hello'  # 'Hello'
+"world!" # 'world!'
 
 # Curly brackets {} for templates.
 
@@ -87,9 +90,9 @@ numbers. 1..-1          # 4 6 8
 
 # Iteration
 
-numbers -> map \(_ / 2)               # 1 2 3 4 5
-numbers -> filter \(_ > 5)            # 6 8 10
-numbers -> reduce \(pv, v) (pv + v) 0 # 30
+numbers -> map \(_ / 2)                # 1 2 3 4 5
+numbers -> filter \(_ > 5)             # 6 8 10
+numbers -> reduce \(pv, v), (pv + v) 0 # 30
 
 let total <- 0
 let i <- 0
@@ -190,7 +193,7 @@ let nodes <- {object: {value: 10, self: 'object'}}
 
 Any valid Fleek program is a list.
 During compilation programs are transformed into S-expressions.
-During runtime programs "collapse" from right to left.
+During runtime programs "collapse" expression-by-expression, from right-to-left.
 
 ```fl
 4 + 3
@@ -207,9 +210,9 @@ During runtime programs "collapse" from right to left.
 # == (1 (2, 3 (4 5), 6))
 
 let number <- 4 * 5 + 6 / 3
-# == (let (number, (+ (* (4, 5), / (6, 3)))))
-# == (let (number, (+ (20, / (6, 3)))))
-# == (let (number, (+ (20, 2))))
+# == (let (number, + (* (4, 5), / (6, 3))))
+# == (let (number, + (20, / (6, 3))))
+# == (let (number, + (20, 2)))
 # == (let (number, 22))
 # == (@number)
 ```

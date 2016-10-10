@@ -14,9 +14,9 @@ let breadthFirstSearch <- \(tree, accumulator []), (
   while \(queue -> length) \(
     let current <- queue.(-1)
     @queue <-- \(_. ..-1)
-    @accumulator <-- concat (__, current)
+    @accumulator <-- \(_:current)
     current ?
-       @queue <-- concat [current.left, current.right]
+       @queue <-- \(current.left:current.right:_)
   )
   return accumulator
 )

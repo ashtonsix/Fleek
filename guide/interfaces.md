@@ -134,6 +134,18 @@ Consistency can alleviate this problem. Data with a fixed structure is easier to
 
 Interfaces exist to make building things easier. Focus on clarity rather than completeness - your application may become hard to modify or perform slowly if you do not heed this advice. Once you've understood interfaces you can mostly ignore them.
 
+## functions
+
+```fl
+: (Interface, Any) => \{oneOf 0 1}
+matches
+```
+
+```fl
+: (Interface, Interface) => \{oneOf 0 1}
+collides
+```
+
 ## Default interfaces
 
 Fleek has an interface for every type in addition to: `Float`, `Integer`, `Number`, `Any`, `Empty`, `Maybe` & `Matrix`.

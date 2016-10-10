@@ -23,12 +23,12 @@ let actions <- ${}
 let state <- ${}
 let reducer <- combineReducers {
   todos: createReducer [] {
-    ADD_TODO: \(state, {payload}), (state. ..:{value: payload, complete: false}:)
-    REMOVE_TODO: \(state, {payload}), (state. ..payload::payload + 1..)
-    TOGGLE_TODO: \(state, {payload}), (
+    ADD_TODO: \(state, {payload}), (state. ..:{value: payload, complete: false})
+    REMOVE_TODO: \(state, {payload: i}), (state. ..i:(i + 1)..)
+    TOGGLE_TODO: \(state, {payload: i}), (
       let todo <-
-        state.(payload) -> \({value: _.value, complete: !_.complete})
-      return <- (state. ..payload:todo:payload + 1..)
+        state.(i) -> \({value: _.value, complete: !_.complete})
+      return <- (state. ..i:todo:(i + 1)..)
     )
   }
   filterType: createReducer 'all' {
