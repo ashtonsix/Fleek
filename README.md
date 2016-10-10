@@ -15,7 +15,7 @@ It features a hybrid interface system that balances flexibility & safety, in add
 
 The following documentation is available:
 
-* Guide - everything you need to use Fleek
+* Guide - practical knowledge for using Fleek
 * Reference - list of all operators & functions
 * Specification - comprehensive test suite
 * Examples

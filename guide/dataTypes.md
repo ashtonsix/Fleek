@@ -1,145 +1,151 @@
 # Data Types
 
-> You rarely have to worry about number types, numbers are `Float64` by default (same as JavaScript).
+Fleek contains the following data types: `Number`, `String`, `Array`, `Map` & `List`.
 
-Fleek contains the following data types: `String`, `Array`, `Map`, `Int8`, `Int16`, `Int32`, `Float32`, `Float64`.
+All data is immutable.
 
 ## Numbers
 
-Basic math looks normal:
-
 ```fl
-> 12 - 6 + 7
-13
-> 4 / 8 + 1 * 2
-2.5
-> (4 / 8 + 1) * 2
-3
-> 5 % 3
-2
-> 5 ^ 2
-25
-```
+# Basic math
 
-Numbers that are indeterminate, complex, or exceed their bounds equal `NaN`. Operations where NaN is a parameter also equal NaN.
+12 - 6          # 6
+(4 / 8) + 1 * 2 # 2.5
+(4 / 8 + 1) * 2 # 3
+5 % 3           # 2
+5 ^ 2           # 25
 
-```fl
-> (
-.   100 ^ 100 ^ 100
-.   Int8 257
-.   5 / 0
-.   -1 ^ 0.5
-.   asin 2
-.   NaN * 2
-. )
-(NaN, NaN, NaN, NaN, NaN, NaN)
+# NaN
+
+100 ^ 100 ^ 100 # NaN
+5 / 0           # NaN
+-1 ^ 0.5        # NaN
+asin 2          # NaN
+NaN * 2         # NaN
 ```
 
 ### Logic
 
-There are no booleans. Every value is truthy except `0` & the empty list `()`.
-All comparison operators return `0` or `1`.
-The `true` & `false` operators are aliases for `1` & `0`.
+Every value is truthy except `0` & the empty list `()`.
 
 ```fl
-> true
-1
-> false
-0
-> 6 > 5
-1
-> 5 <= 2
-0
-> 5 == 5
-1
-> (Int32 5) == 5
-0
-> !0
-1
-> !'Hello'
-0
+true     # 1
+false    # 0
+
+6 > 5    # 1
+5 == 5   # 1
+!0       # 1
+!'Hello' # 0
 ```
 
 ## Strings
 
-You can use single `''`, or double `""` quotes.
-Backslash `\` to escape. Curly brackets `{}` for templates.
-Multi-line strings work fine. Whitespace at the start of new lines is trimmed to match the shortest line.
-
 ```fl
-> let name <- 'Jim'
-@name: String
-> '
-.   Hello {name}!
-.     \'Hi.\'
-. '
-Hello Jim!
-  'Hi.'
+# Single '', or double "" quotes.
+
+'Hello' # 'Hello'
+"world" # 'world!'
+
+# Curly brackets {} for templates.
+
+let name <- 'Jim' # @name
+'Hello {name}!'   # 'Hello Jim!'
+
+# Backslash \ to escape.
+
+'\{value: 20}' # '{value: 20}'
+
+# Whitespace at the start of new lines is trimmed to match the shortest line.
+
+'
+  A happy ending..
+    depends on when you stop your story
+'
+#~
+A happy ending..
+  depends on when you stop your story
+~#
 ```
 
 ## Arrays
 
-Arrays can contain multiple items. Iterate over arrays with functions like `map`, `reduce` & `filter`.
-
 ```fl
-> let numbers <- [2 4 3]
-@numbers: Array
-> numbers -> length
-3
-> numbers -> map \(_ * 2)
-4 8 6
-> numbers.(0)
-4
+# Creation
+
+[2 4 6] # 2 4 6
+1..3    # 1 2 3
+0..2..8 # 0 2 4 6 8
+
+# Access
+
+let numbers <- 2..4..10 # @numbers
+numbers -> length       # 5
+numbers.1               # 4
+numbers. ..2            # 2 4
+numbers. 2..            # 6 8 10
+numbers. 1..-1          # 4 6 8
+
+# Iteration
+
+numbers -> map \(_ / 2)               # 1 2 3 4 5
+numbers -> filter \(_ > 5)            # 6 8 10
+numbers -> reduce \(pv, v) (pv + v) 0 # 30
+
+let total <- 0
+let i <- 0
+while \(i < (numbers -> length)) \(
+  @i <-- \(_ + 1)
+  @total <-- \(_ + numbers.(i))
+)
+# total == 30
+
+# Manipulation
+
+[1 2 3]:[4]                    # 1 2 3 4
+1..10. ..4:6..6:[20]           # 1 2 3 4 6 20
+
+3..6..50 -> takeWhile \(_ % 5) # 3 6 9 12 15
+(3..6..50, 5..10..50) -> union # 15 30 45
 ```
 
-Arrays can be multi-dimensional.
+### Multi-dimensional arrays
+
+> You may be looking for the [matrix guide](./matrices)
 
 ```fl
-> let numbers <- [2 4; 5 6]
-@numbers: Array
-> numbers -> map \(_ + 2)
-4 6
-7 8
-> numbers.(1, 0)
-7
-> let numbers3d <- [[0 0] [0 1]; [1 0] [1 1]]
-@numbers: Array
-> numbers3d
-[0 0] [0 1]
-[1 0] [1 1]
-> numbers3d.(0, 1)
-0 1
-> numbers3d.(0, 1, 1)
-1
+# Creation
+
+[2 4; 5 6] # 2 4
+           # 5 6
+
+1..2 1..3  # 1 2 3
+           # 2 3 4
+
+eye 2      # 1 0
+           # 0 1
+
+# Access
+
+let numbers <- [1 2; 3 4] # @numbers
+numbers.(0 0)             # 1
+numbers.(1 0)             # 3
+numbers.(1 ..)            # 3 4
+
+(0..4 0..4).(3.., ..)     # 3 4 5 6
+                          # 4 5 6 7
 ```
 
-`map` takes the dimension as an optional argument, to, for example, iterate through rows or columns.
+Many iterators accept the dimension as an optional argument.
+
 `0` = every value, `1` = rows, `2` = columns, ..., `-1` = rows reversed.
 
 ```fl
-> let couples <- ['Jessica' 'Rakesh'; 'Tim' 'Rihanna']
-@couples: Array
-> couples -> map \('{_.0} & {_.1}') 1
-'Jessica & Rakesh'
-'Tim & Rihanna'
-```
+1..2 1..3 -> map \(_ * 2)                            # 2 4 6
+                                                     # 4 6 8
 
-You can use [ranges](./logicalTypes.md#Ranges) to create, slice, splice & concatenate arrays.
-
-```fl
-> 0..2..8
-0 2 4 6 8
-> let numbers <- Array (0..3, 0..3)
-@numbers: Array
-> numbers
-0 1 2 3
-1 2 3 4
-2 3 4 5
-3 4 5 6
-> numbers(1.., ..1::3)
-1 2 4
-2 3 5
-3 4 6
+let couples <- ['Jessica' 'Rakesh'; 'Tim' 'Rihanna'] # @couples
+couples -> map \('{_.0} & {_.1}') 1                  # 'Jessica & Rakesh'
+                                                     # 'Tim & Rihanna'
 ```
 
 ## Maps
@@ -147,92 +153,82 @@ You can use [ranges](./logicalTypes.md#Ranges) to create, slice, splice & concat
 Maps associate values with keys.
 
 ```fl
-> let student <- {age: 9, name: 'Arthur', favoriteSubject: 'Chinese'}
-@student: Map
-> student.age
-9
-> student.(join 'na' 'me')
-'Arthur'
-> student -> omit ['age']
-{name: 'Arthur', favoriteSubject: 'Chinese'}
+# Creation
+
+let student <- {age: 9, name: 'Arthur'}         # @student
+student == fromPairs ['age' 9; 'name' 'Arthur'] # 1
+
+# Access
+
+student.age             # 9
+student.('age' 'name')  # (9 'Arthur')
+student -> omit ['age'] # {name: 'Arthur'}
+
+# Iteration
+
+student -> mapKeys \(_:_)    # {ageage: 9, namename: 'Arthur'}
+{x: 5, y: 2} -> map \(_ * 2) # {x: 10, y: 4}
 ```
 
-You can pass multiple arguments to the property access operator `.`
+### Circular data structures
+
+Because all data is immutable circular structures are impossible. Data is copied, not linked.
 
 ```fl
-> student
-{age: 9, name: 'Arthur', favoriteSubject: 'Chinese'}
-> student.('age', 'name')
-(9, 'Arthur')
+let object <- {value: 10} # @object
+@object.self <- object    # @object
+object                    # {value: 10, self: {value: 10}}
 ```
 
-Maps can be nested, or recursive.
+To represent, for example, a cyclic graph you might use `Map` keys to describe edges.
 
 ```fl
-> let teacher <- {name: 'Tabitha', students: [student]}
-@teacher: Map
-> @student.teacher <- teacher
-@student: Map
-> student.teacher.students.0 == student
-1
+let nodes <- {object: {value: 10, self: 'object'}}
 ```
 
 ## Lists
 
-Any valid Fleek code is a list.
-
-Midway through compilation Fleek is represented with S-expressions which makes the list structure more apparent:
-
-```fl
-# Before:
-let number <- 4 * 5 + 6 / 3
-let arr <- [50] -> concat [number]
-
-# After:
-(
-  let (number, (+ (* (4, 5), / (6, 3)))),
-  let (arr, (concat ([number], [50])))
-)
-```
-
-When evaluated lists collapse line-by-line from right-to-left:
+Any valid Fleek program is a list.
+During compilation programs are transformed into S-expressions.
+During runtime programs "collapse" from right to left.
 
 ```fl
-( let (number, (+ (* (4, 5), / (6, 3)))),
-  let (arr, (concat ([number], [50]))) )
+4 + 3
+4 / 2
+# == (7 2)
 
-( let (number, (+ (20, 2))),
-  let (arr, (concat ([number], [50]))) )
+# Nesting
 
-( let (number, 22)),
-  let (arr, (concat ([number], [50]))) )
-
-( @number: Number,
-  let (arr, (concat ([number], [50]))) )
-
-( @number: Number,
-  let (arr, [number, 50]) )
-
-( @number: Number, @arr: Array )
-```
-
-Arguments are always passed into functions via lists. As you saw in the above example one list can pass multiple arguments at once. You can think of a function as a list waiting to be evaluated. In fact, if you convert any valid list to a function & then call that function it will return an equal list.
-
-Example:
-
-```fl
-> let list0 <- \(
-.   let number <- 4 * 5 + 6 / 3
-.   let arr <- [50] -> concat [number]
-. ) ()
-@list0: (Number, Array)
-> let list1 <- (
-.   let number <- 4 * 5 + 6 / 3
-.   let arr <- [50] -> concat [number]
-. )
-@list1: (Number, Array)
-> list0 == list1
 1
+  2
+  3
+    4 5
+  6
+# == (1 (2, 3 (4 5), 6))
+
+let number <- 4 * 5 + 6 / 3
+# == (let (number, (+ (* (4, 5), / (6, 3)))))
+# == (let (number, (+ (20, / (6, 3)))))
+# == (let (number, (+ (20, 2))))
+# == (let (number, 22))
+# == (@number)
 ```
+
+The `return` function makes lists more "specific".
+
+```fl
+(20, 10)           # (20, 10)
+(20, return <- 10) # 10
+
+\(let temp <- _, temp + 2) 2           # (@temp, 4)
+\(let temp <- _, return <- temp + 2) 2 # 4
+```
+
+Function arguments are lists, one list can pass multiple arguments at once. You can think of functions as lists waiting to be evaluated.
 
 Lists can be manipulated with many of the same functions + operators as arrays.
+
+```fl
+(4 5 6).2            # 6
+(1 2 3) map \(_ * 2) # 2 4 6
+```
