@@ -16,7 +16,7 @@ It features a hybrid interface system that balances flexibility & safety, in add
 
 The following documentation is available:
 
-* Guide - practical knowledge for using Fleek
+* [Guide](https://ashtonwar.gitbooks.io/fleek/content/) - practical knowledge for using Fleek
 * Reference - list of all operators & functions
 * Specification - comprehensive test suite
 * Examples
