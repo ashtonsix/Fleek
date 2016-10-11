@@ -1,7 +1,7 @@
 # Grammar
 
 The following topics are not covered in this guide:
-[chaining](./functions.md#chaining), [destructuring](./functions.md#destructuring) & [iteration](./types.md#arrays)
+[chaining](./functions.md#composition), [destructuring](./functions.md) & [iteration](./types.md#arrays)
 
 ## Comments
 
