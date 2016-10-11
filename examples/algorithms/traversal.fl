@@ -9,14 +9,15 @@ let depthFirstSearch <- \(tree, accumulator []), (
     depthFirstSearch tree.right
 )
 
-let breadthFirstSearch <- \(tree, accumulator []), (
+let breadthFirstSearch <- \(tree), (
   let queue <- [tree]
+  let result <- []
   while \(queue -> length) \(
     let current <- queue.(-1)
     @queue <-- \(_. ..-1)
-    @accumulator <-- \(_:current)
+    @result <-- \(_:current)
     current ?
        @queue <-- \(current.left:current.right:_)
   )
-  return accumulator
+  return result
 )

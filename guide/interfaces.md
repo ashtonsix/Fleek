@@ -1,6 +1,6 @@
 # Interfaces
 
-Interfaces describe your data. They help you find bugs at compile time, reduce runtime errors & make operators / functions more versatile. Every function & identity has an interface. Fleek's hybrid (dynamic / static) approach to interfaces creates a strong balance between imperative flexibility & functional safety.
+Interfaces describe your program, identifying errors during compilation & runtime. Every function & identity has an interface.
 
 Most functional languages are pure, this means:
 
@@ -17,15 +17,14 @@ When compiling the interface system has 3 possible outcomes:
 
 1. Able to prove every function & operator is called with valid arguments (success)
 2. Able to disprove #1 (failure)
-3. Unable to prove or disprove #1 (failure)
+3. Unable to prove or disprove #1
+  * Checks for explicit interfaces, if present the application compiles (success)
+  * Candidate interfaces presented (add to code or write your own)
 
-In case #3 Fleek will identify candidate interfaces / assertions that could prove the application's correctness.
-You can add these candidate assertions to your code or write your own.
-Unprovable interfaces, when declared, are taken at face-value & allow the application to compile.
-If the assertion is proven wrong at runtime an error is thrown.
-These are the only run-time errors Fleek will encounter.
+Unproved interfaces are checked at runtime, if incorrect an error is thrown.
+These are the only runtime errors you will encounter.
 
-This example application would compile, but break if `mysteryNumberGenerator` returns a number greater than `1`:
+This example program would compile, but break if `mysteryNumberGenerator` returns a number greater than `1`:
 
 ```fl
 import mysteryNumberGenerator from 'mysteryNumberGenerator'
@@ -33,21 +32,19 @@ import mysteryNumberGenerator from 'mysteryNumberGenerator'
 : () => Number
 let myFunction <- \(), (
   let number <- mysteryNumberGenerator ()
-  return (
+  return <-
     number <= 1 ? 100 : 'Hello'
-  )
 )
 
-(myFunction ()) + 5
+myFunction ()
 ```
 
-## Syntax
+## Usage
 
-> This guide focuses on creating interfaces, read the [functions guide](./functions) for usage examples.
-
-Interfaces make assertions about values, assertions can transform values before evaluation. This example checks for a `Map` with properties `name` & `id` that has length 10:
+The interface context has it's own native library - functions can fail & accept any arguments.
 
 ```fl
+let Node <-
 Interface
 \{
   Map
@@ -56,62 +53,78 @@ Interface
   \(length _.id): equalTo 10
   \(allRemaining _): Any
 }
-```
 
-The functions used inside interfaces are different than those in the default context - they can fail (while compiling only) & accept any arguments.
+: Node
+let node <- {name: 'Abyss', id: 'dy26fo7bic', other: 5}
 
-You can pass arguments to interfaces themselves. The `Matrix` interface allows you to specify a number of columns & rows.
+collides Number String   # 0
+collides \{min 0} Number # 1
 
-```fl
+matches \{min 0} 5       # 1
+matches \{min 0} -2      # 0
+matches \{min 0} 'Test'  # 0
+
+# Interface arguments
+
 let Matrix <-
 Interface
 \(rows, cols), {
   Array
-  \(dimension _): oneOf 1 2
+  all Number
+  \(dimension _): lessThanEqual 2
   \(length 0 _): equalTo rows
   \(length 1 _): equalTo cols
-  oneOf (
-    all Int8, all Int16, all Int32,
-    all Float32, all Float64)
   allMatch 0 length # Every row is the same length
   allMatch 1 length
 }
-```
 
-You can compare unknown interface arguments (uses post-transform values). This is important for checking matrix dimensions match.
+: Matrix (__ 1)
+let columnVector <- [5; 6; 4]
 
-```fl
-: (Matrix (m a), Matrix (a n)) => Matrix (m n)
-let multiply <- \(m0, m1), ( ... )
+# Argument comparison
 
 : (
-:   Matrix (m a), Matrix (a 1), Matrix(m 1)
-:   \{Number, min 0}, \{Number, min 0}
-: ) => Matrix (m 1)
-let gradientDescent <- \(
-  data, trainingResults, theta
-  learningRate, iterations
-), ( ... )
+:   Matrix (m a)
+:   Matrix (a n)
+: ) => Matrix (m n)
+let multiply <- \(m0, m1), ( ... )
 ```
 
-Interfaces for functions append their runtime arguments to the interface arguments you provide.
+Function interfaces append their runtime arguments to the interface arguments you provide
 
-```fl
-# (eye 2) == [1 0; 0 1]
+```
+: (Number, Number) => Number
+let add <- \(_0 + _1)
+
+# Function arguments
+
 : Number => Matrix \(_, _)
 let eye <- \(size), ( ... )
 
-# (repeat 3 'ab') == 'ababab'
-: (Number, String) => \(repetitions, str),
-:                     {String, \(length _): repetitions * (length str)}
+eye 2 # 1 0
+      # 0 1
+
+let RepeatedString <-
+Interface
+\(repetitions, str), {
+  String,
+  \(length _): repetitions * (length str)
+}
+
+: (Number, String) => RepeatedString
 let repeat <- \(repetitions, str) -> ( ... )
-```
 
-You can use placeholders for interface arguments you don't care about: `Matrix (__, 1)` matches all matrices with 1 column.
+repeat 3 'ab' # 'ababab'
 
-You can nest interfaces recursively or like onions.
+# Spreading
 
-```fl
+: (Array, ...Number) => Array
+let omitAt <- \( #~ ... ~# )
+
+omitAt 0..8 3 4 6 # [0 1 2 5 7 8]
+
+# Recursion
+
 let BinaryTree <-
 Interface
 \{
@@ -121,40 +134,23 @@ Interface
   key: oneOf (Number, String)
   value: Any
 }
-
-: Stream (Maybe (Matrix (__, 1)))
-let LearningStream <- (...)
 ```
 
-## Type checking
+## Runtime checking
 
-Fleek can prove much of your code is safe. Fleek's hybrid interface system allows unproven interfaces when annotated as described above (top of guide). When Fleek reassigns identities or calls functions & is unable to prove values match interfaces a type check is required, these can be slow.
+Fleek can prove a lot of your code is valid. When it can't runtime checks are required, these checks can be expensive.
 
-Consistency can alleviate this problem. Data with a fixed structure is easier to reason about. Treat your data consistently too - for example `filter` can accept a `Matrix` (because every `Matrix` is also an `Array`) but it might or might not return a `Matrix`, using filter inside a function that manipulates matrices could be a mistake.
+Provable code is often faster, safer & easier to reason about. For most interfaces there will be a "safe" subset of functions that always returns valid data, a preference towards these is advisable. For example every `Matrix` is an `Array` - so you can `filter` any `Matrix`, the result may or may not be a `Matrix`. Thus you should avoid filtering matrices if you depend on the result being a `Matrix`.
 
-Interfaces exist to make building things easier. Focus on clarity rather than completeness - your application may become hard to modify or perform slowly if you do not heed this advice. Once you've understood interfaces you can mostly ignore them.
-
-## functions
-
-```fl
-: (Interface, Any) => \{oneOf 0 1}
-matches
-```
-
-```fl
-: (Interface, Interface) => \{oneOf 0 1}
-collides
-```
-
-## Default interfaces
+## Native interfaces
 
 Fleek has an interface for every [type](./types.md) in addition to: `Any`, `Empty` & `Matrix`.
 
 * `Any` matches anything
 * `Empty` matches the empty list only
-* `Matrix` is detailed inside the [matrix guide](./matrices.md)
+* `Matrix` is described inside the [matrix guide](./matrices.md)
 
-Every interface also accepts the empty list by default. This makes static analysis much easier & keeps your application flexible. You can explicitly disallow empty lists, this is *not* advisable in the general case.
+Every interface also accepts the empty list by default, which makes static analysis easier & keeps your application flexible. You can explicitly disallow empty lists.
 
 ```fl
 : \{Any, not Empty}
@@ -165,6 +161,6 @@ Every native function & operator handles empty lists, either by returning an emp
 ```fl
 > 4 + ()
 4
-> has 'key' ()
+> map \(_) ()
 ()
 ```
