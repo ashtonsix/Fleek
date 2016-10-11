@@ -147,7 +147,7 @@ Many iterators accept the dimension as an optional argument.
                                                      # 4 6 8
 
 let couples <- ['Jessica' 'Rakesh'; 'Tim' 'Rihanna'] # @couples
-couples -> map \('{_.0} & {_.1}') 1                  # 'Jessica & Rakesh'
+couples -> map (\('{_.0} & {_.1}'), 1)               # 'Jessica & Rakesh'
                                                      # 'Tim & Rihanna'
 ```
 
