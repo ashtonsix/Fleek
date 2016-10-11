@@ -90,9 +90,9 @@ numbers. 1..-1          # 4 6 8
 
 # Iteration
 
-numbers -> map \(_ / 2)                # 1 2 3 4 5
-numbers -> filter \(_ > 5)             # 6 8 10
-numbers -> reduce \(pv, v), (pv + v) 0 # 30
+numbers -> map \(_ / 2)                   # 1 2 3 4 5
+numbers -> filter \(_ > 5)                # 6 8 10
+numbers -> reduce (\(pv, v), (pv + v), 0) # 30
 
 let total <- 0
 let i <- 0
