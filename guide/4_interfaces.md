@@ -98,7 +98,7 @@ let add <- \(_0 + _1)
 
 # Function arguments
 
-: Number => Matrix \(_, _)
+: Number => Tensor \(_, _)
 let eye <- \(size), ( ... )
 
 eye 2 # 1 0
@@ -140,15 +140,15 @@ Interface
 
 Fleek can prove a lot of your code is valid. When it can't runtime checks are required, these checks can be expensive.
 
-Provable code is often faster, safer & easier to reason about. For most interfaces there will be a "safe" subset of functions that always returns valid data, a preference towards these is advisable. For example every `Matrix` is an `Array` - so you can `filter` any `Matrix`, the result may or may not be a `Matrix`. Thus you should avoid filtering matrices if you depend on the result being a `Matrix`.
+Provable code is often faster, safer & easier to reason about. For most interfaces there will be a "safe" subset of functions that always returns valid data, a preference towards these is advisable. For example every `Tensor` is an `Array` - so you can `filter` any `Tensor`, the result may or may not be a `Tensor`. Thus you should avoid filtering tensors if you depend on the result being a `Tensor`.
 
 ## Native interfaces
 
-Fleek has an interface for every [type](./1_types.md) in addition to: `Any`, `Empty` & `Matrix`.
+Fleek has an interface for every [type](./1_types.md) in addition to: `Any`, `Empty` & `Tensor`.
 
 * `Any` matches anything
 * `Empty` matches the empty list only
-* `Matrix` is described inside the [matrix guide](./5_matrices.md)
+* `Tensor` is described inside the [tensor guide](./5_tensors.md)
 
 Every interface also accepts the empty list by default, which makes static analysis easier & keeps your application flexible. You can explicitly disallow empty lists.
 

@@ -8,7 +8,7 @@ It features a hybrid interface system that balances flexibility & safety, in add
 * Composable functions
 * Reactive streams
 * Transaction-based intertop
-* High-performance matrices
+* High-performance tensors
 * Macro-based operators & contexts
 * Lisp-inspired lists
 * Distributed runtime

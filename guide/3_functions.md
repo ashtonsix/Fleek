@@ -130,9 +130,9 @@ let add <- (
   \( ... )
   : (String, String) => String
   \( ... )
-  : (Matrix, Number) => Matrix
+  : (Tensor, Number) => Tensor
   \( ... )
-  : (Matrix, Matrix) => Matrix
+  : (Tensor, Tensor) => Tensor
   \( ... )
 )
 

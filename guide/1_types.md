@@ -113,7 +113,7 @@ while \(i < (numbers -> length)) \(
 
 ### Multi-dimensional arrays
 
-> You may be looking for the [matrix guide](./5_matrices.md)
+> You may be looking for the [tensor guide](./5_tensors.md)
 
 ```fl
 # Creation
