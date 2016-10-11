@@ -21,7 +21,7 @@ When compiling the interface system has 3 possible outcomes:
   * Checks for explicit interfaces, if present the application compiles (success)
   * Candidate interfaces presented (add to code or write your own)
 
-Unproved interfaces are checked at runtime, if incorrect an error is thrown.
+Unproved interfaces are checked at runtime, if invalid an error is thrown.
 These are the only runtime errors you will encounter.
 
 This example program would compile, but break if `mysteryNumberGenerator` returns a number greater than `1`:
