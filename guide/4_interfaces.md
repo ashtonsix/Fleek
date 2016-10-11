@@ -144,11 +144,11 @@ Provable code is often faster, safer & easier to reason about. For most interfac
 
 ## Native interfaces
 
-Fleek has an interface for every [type](./types.md) in addition to: `Any`, `Empty` & `Matrix`.
+Fleek has an interface for every [type](./1_types.md) in addition to: `Any`, `Empty` & `Matrix`.
 
 * `Any` matches anything
 * `Empty` matches the empty list only
-* `Matrix` is described inside the [matrix guide](./matrices.md)
+* `Matrix` is described inside the [matrix guide](./5_matrices.md)
 
 Every interface also accepts the empty list by default, which makes static analysis easier & keeps your application flexible. You can explicitly disallow empty lists.
 

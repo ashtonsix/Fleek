@@ -1,6 +1,10 @@
-##### Matrices
+# Matrices
 
-A matrix is an array that contains only numbers (of the same type) & is rectangular. They support linear algebra operations.
+> Every `Matrix` is an `Array`, read the [interface guide](./3_interfaces.md) to understand this.
+
+A `Matrix` is a rectangular `Array` that contains only numbers & does high-performance computation.
+
+The following operators are
 
 ```fl
 > [4 6] + 2

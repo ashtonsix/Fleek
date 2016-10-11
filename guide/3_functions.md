@@ -1,6 +1,6 @@
 # Functions
 
-> Make sure you understand [lists](./types.md#lists) before reading this.
+> Make sure you understand [lists](./1_types.md#lists) before reading this.
 
 You can access the original argument list with `(...)`
 

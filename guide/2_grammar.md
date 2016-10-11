@@ -1,7 +1,7 @@
 # Grammar
 
 The following topics are not covered in this guide:
-[chaining](./functions.md#composition), [destructuring](./functions.md) & [iteration](./types.md#arrays)
+[chaining](./3_functions.md#composition), [destructuring](./3_functions.md) & [iteration](./1_types.md#arrays)
 
 ## Comments
 
@@ -67,7 +67,7 @@ switch
 
 ## Modules
 
-Every export requires an explicit [interface](./interfaces.md)
+Every export requires an explicit [interface](./4_interfaces.md)
 
 ```fl
 # math.fl
