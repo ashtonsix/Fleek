@@ -64,8 +64,8 @@ Calling a function with less arguments than required returns a partially applied
 
 ```fl
 let add <- \(_0 + _1)  # @add
-let inc5 <- add 5      # @inc5
-inc5 4                 # 9
+let add5 <- add 5      # @add5
+add5 4                 # 9
 
 # Overriding arity
 
