@@ -7,7 +7,10 @@ describe('creation', () => {
   })
   describe('type', () => {
     it('should create a Number', () => {
-      const program = `(let value <- 6, return <- @value.type)`
+      const program = `
+        let value <- 6
+        return <- @value.type
+      `
       expect(fleek(program)).toEqual(`'Number'`)
     })
     it('should create a String', () => {
@@ -25,16 +28,22 @@ describe('creation', () => {
   })
   describe('value', () => {
     it('should have the correct value', () => {
-      const program = `(let value <- 6, return <- @value.value)`
+      const program = `
+        let value <- 6
+        return <- @value.value
+      `
       expect(fleek(program)).toEqual(`6`)
     })
   })
   describe('interface', () => {
-    it('should not be possible to access an undefined Interface', () => {
-      const program = `(let value <- 6, return <- @value.interface)`
+    it('should have an undefined Interface', () => {
+      const program = `
+        let value <- 6
+        return <- @value.interface
+      `
       expect(fleek(program)).toEqual(`()`)
     })
-    it('should be possible to access an explicitly defined Interface', () => {
+    it('should have an Interface', () => {
       const program = `
         : Number
         let value <- 6
@@ -46,25 +55,99 @@ describe('creation', () => {
 })
 
 describe('access', () => {
-  it('should not be possible to access an identity before creation', () => {
+  it('should not access before creation', () => {
     const program = `(value, let value <- 6)`
     expect(() => fleek(program)).toThrow()
+  })
+  describe('scope', () => {
+    it('should not access in a lower scope', () => {
+      const program = `
+        (let value <- 6)
+        value
+      `
+      expect(() => fleek(program)).toThrow()
+    })
+    it('should access in a higher scope', () => {
+      const program = `
+        let value <- 6
+        return <- (value)
+      `
+      expect(fleek(program)).toEqual('6')
+    })
+    it('should access in a function', () => {
+      const program = `
+        let value <- 6
+        let func \(value)
+        return <- func ()
+      `
+      expect(fleek(program)).toEqual('6')
+    })
+    it('should access in an isolated scope', () => {
+      const program = `
+        let func <- (
+          let value <- 6
+          return \(value)
+        )
+        return <- func ()
+      `
+      expect(fleek(program)).toEqual('6')
+    })
   })
 })
 
 describe('updating', () => {
-
+  it('should update a value', () => {
+    const program = `
+      let value <- 6
+      @value <- 3
+      return <- value
+    `
+    expect(fleek(program)).toEqual('3')
+  })
+  describe('modules', () => {
+    it('should not update an import', () => {
+      const lib = `
+        : Number
+        let value <- 6
+        export value
+      `
+      const program = `
+        import value from lib
+        @value <- 3
+      `
+      expect(() => fleek(program, {lib})).toThrow()
+    })
+  })
+  describe('immutablity', () => {
+    it('should copy an identity', () => {
+      const program = `
+        let value <- 6
+        let id <- @value
+        @value <- 3
+        return id.value
+      `
+      expect(fleek(program)).toEqual('6')
+    })
+  })
+  describe('functions', () => {
+    it('should access the updated identity', () => {
+      const program = `
+        let value <- 6
+        let func <- \(value)
+        @value <- 3
+        return func ()
+      `
+      expect(fleek(program)).toEqual('3')
+    })
+    it('should access the updated identity inside a partially applied function', () => {
+      const program = `
+        let value <- 6
+        let incrementId <- \(id, increment), (@id.value + increment)
+        let incrementValue <- func @value
+        @value <- 3
+        return (value, incrementValue 5)
+      `
+      expect(fleek(program)).toEqual('(3 8)')
+    })
+  })
 })
-
-// # Access
-//
-// @number           # @number
-// @number.value     # 6
-// @number.type      # 'Number'
-// @number.interface # ()
-// @string.interface # String
-//
-// # Updating
-//
-// @number <- 3      # @number
-// number            # 3
