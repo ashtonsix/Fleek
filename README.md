@@ -47,7 +47,7 @@ let render <- \(view), (
     view
 )
 
-: Stream (Number => ())
+: Stream
 reducer -> Counter -> render
 ```
 

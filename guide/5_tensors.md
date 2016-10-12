@@ -1,6 +1,6 @@
 # Tensors
 
-> Read the [array](./1_types#arrays) & [interface](./3_interfaces.md) guides if you haven't already.
+> Read the [array](./1_types.md#arrays) & [interface](./3_interfaces.md) guides if you haven't already.
 
 A `Tensor` is a rectangular `Array` that contains only numbers & does high-performance computation.
 
