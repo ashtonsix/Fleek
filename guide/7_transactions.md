@@ -1,4 +1,30 @@
-Native fleek code can't do anything in practice except heat up your CPU. Actually doing anything requires importing from the JavaScript interop.
-Things get done when lists collapse into transactions: a type of function that can run side-effects.
+# Transactions
 
-You can also write unsafe code (mutable types, inconsistent functions / identifiers) & interact directly with JavaScript by using transactions. Transactions are isolated functions that cannot interact with the application other than by returning values. The type system cannot prove anything about transactions so you'll need to add assertions manually.
+Native Fleek has no side-effects. Doing anything (interacting with DOM, sending network requests, etc) requires transactions.
+
+Transactions are similar to functions but have the following differences:
+
+* Can access imported JavaScript
+* Must have an explicit interface
+* Cannot pass functions or identities as arguments
+* Cannot access identities in outer scope
+* Can only use native functions & operators
+
+Arguments passed to & received from JavaScript are serialized to JSON. If the JS throws it'll return an empty list.
+
+```js
+// myLibrary.js
+
+export const add = (x, y) => x + y
+```
+
+```fl
+# index.fl
+
+import {add as addJS} from ./myLibrary.js
+
+: (Number, Number) => Number
+let add <-
+Transaction
+\(addJS _0 _1)
+```
