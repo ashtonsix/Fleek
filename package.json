@@ -1,0 +1,24 @@
+{
+  "name": "fleek",
+  "version": "0.0.0",
+  "description": "A functional language that compiles to JavaScript",
+  "scripts": {
+    "start": "jest --watch",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashtonwar/Fleek.git"
+  },
+  "author": "Ashton <me@ashtonwar.com> (http://www.ashtonwar.com/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ashtonwar/Fleek/issues"
+  },
+  "homepage": "https://github.com/ashtonwar/Fleek#readme",
+  "devDependencies": {
+    "babel-jest": "16.0.0",
+    "babel-polyfill": "6.16.0",
+    "babel-preset-latest": "6.16.0"
+  }
+}
