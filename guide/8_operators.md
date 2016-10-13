@@ -2,24 +2,29 @@
 
 Operators let you create custom syntax for your program or library.
 
-```fl
-: Number => Number
-let abs <-
-Operator{|_|}, \(_ < 0 ? _ * -1 : _)
+Operators accept a fixed number of arguments & must have explicit interfaces, any type or syntax collision with another defined operator precludes successful compiling.
 
-| 3| # 3
-|-3| # 3
+```fl
+: (Any, Any) => Number
+let xor <-
+Operator{__ xor __}, \((_0 ? !_1 : _1) ? 1 : 0)
+
+1 xor 1 # 0
+1 xor 0 # 1
+0 xor 1 # 1
+0 xor 0 # 0
 ```
 
+Operators that collide can be bundled in lists, the first operator to be matched is used.
 
 ```fl
 let listComprehension <- (
-  : (Function, Array) => Array
-  Operator{for _ in _}, (listComprehension.1 (..., \(true))
   : (Function, Array, Function) => Array
-  Operator{for _ in _ if _}, \(f0, arr, f1), (
+  Operator{for __ in __ if __}, \(f0, arr, f1), (
     arr -> map f0 -> filter f1
   )
+  : (Function, Array) => Array
+  Operator{for __ in __}, \(listComprehension.0 (..., \(true)))
 )
 
 for \(_ + 2) in [1 2 3]          # 3 4 5
@@ -41,8 +46,46 @@ a OP1 (b OP2 c) => (OP1 (a, OP2 (b, c)))
 In a tie the operator on the left is considered to have higher precedence. By default custom operators have precedence 20 (highest possible).
 
 ```fl
-let lowPrecedenceOp <- Operator{OP _}, (_):3
-
+let lowPrecedenceOp <- Operator{OP __}, (_):3
 ```
 
-Operators accept a fixed number of arguments, must have explicit interfaces, and any ambiguity regarding which operator to use prevents successful compiling.
+## Collisions
+
+Operators collide if this function returns true:
+
+```js
+// Example:
+// operatorsCollide(
+//   {syntax: 'for __ in __', interfaces: [FunctionInterface, ArrayInterface]},
+//   {syntax: 'for __ in __ if __', interfaces: [FunctionInterface, ArrayInterface, FunctionInterface]}
+// )
+const operatorsCollide = (op1, op2) => {
+  const sharesToken = (s1, s2) => {
+    s1 = new Set(s1)
+    for (let i = 0; i < s2.length; i++) {
+      if (s1.has(s2[i])) return true
+    }
+  }
+  const s1 = op1.syntax.split('__').map(str => str.trim())
+  const s2 = op1.syntax.split('__').map(str => str.trim())
+  const syntaxEqual = s1.join('__') === s2.join('__')
+  if (sharesToken(s1, s2) && !syntaxEqual) return true
+  if (syntaxEqual) return interfacesCollide(op1.interface, op2.interface)
+  return false
+}
+```
+
+The [interface guide](./4_interfaces.md.md#usage) describes interface collisions.
+
+## Context
+
+> You cannot define contexts yourself
+
+Fleek's syntax varies based on context. For example, a colon `:` can indicate:
+
+* concatenation (default)
+* 'else' condition (ternary)
+* key-value seperation (key)
+* interface assignment (newline)
+
+Contexts have start/end conditions & a set of operators/functions that can be used inside.

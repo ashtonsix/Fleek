@@ -83,17 +83,17 @@ math.add 4 5 # 9
 multiply 4 5 # 20
 ```
 
-`exportSyntax` can export operators, contexts & multiple functions per namespace (via lists)
+`exportSyntax` can export operators & multiple functions per namespace (via lists)
 
 ```fl
 # math.fl
 : Number => Number
 let flipSign <-
-Operator{~ _}, \(_ * -1)
+Operator{~ __}, \(_ * -1)
 
 : Number => Number
 let inverse <-
-Operator{_'}, \(1 / _)
+Operator{__'}, \(1 / _)
 
 let math <- (flipSign, inverse)
 exportSyntax math
