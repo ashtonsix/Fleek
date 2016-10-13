@@ -67,19 +67,13 @@ switch
 
 ## Modules
 
-Every export requires an explicit [interface](./4_interfaces.md)
+Every export in your program's entry file requires an explicit [interface](./4_interfaces.md)
 
 ```fl
 # math.fl
-: (Number, Number) => Number
 let add <- \(_0 + _1)
-
-: (Number, Number) => Number
 let multiply <- \(_0 * _1)
-
-: Map
 let math <- {add, multiply}
-
 export math, {add, multiply}
 
 # index.fl
