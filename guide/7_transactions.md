@@ -21,7 +21,7 @@ export const add = (x, y) => x + y
 ```fl
 # index.fl
 
-import {add as addJS} from ./myLibrary.js
+import {add as addJS} from './myLibrary.js'
 
 : (Number, Number) => Number
 let add <-
@@ -49,7 +49,7 @@ export const interval = (emit, every) => {
 ```fl
 # index.fl
 
-import {interval as intervalJS} from ./interval.js
+import {interval as intervalJS} from './interval.js'
 
 : (Function, Number) => Stream (Empty)
 let interval <-
@@ -66,7 +66,7 @@ interval # ${0 1 2 3 ...}
 ```fl
 # fetch.fl
 
-import {fetch as fetchJS} from ./fetch.js
+import {fetch as fetchJS} from './fetch.js'
 
 : (Function, String, String, Map) => Stream (Map)
 let fetchTransaction <-
@@ -81,7 +81,7 @@ export fetch
 
 # index.fl
 
-import fetch from ./fetch
+import fetch from './fetch'
 
 requests -> fetch $> flatten # ${...responses}
 ```

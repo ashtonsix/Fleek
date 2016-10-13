@@ -7,9 +7,9 @@ let reducer <- ${0}
 : Number => Element
 let Counter <- \(state), (
   div
-    button ({onClick: \($reducer <-- \(_ - 1))}, `-`)
+    button {onClick: \($reducer <-- \(_ - 1))} '-'
     div state
-    button ({onClick: \($reducer <-- \(_ + 1))}, `+`)
+    button {onClick: \($reducer <-- \(_ + 1))} '+'
 )
 
 : Element => ()

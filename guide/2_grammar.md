@@ -77,7 +77,7 @@ let math <- {add, multiply}
 export math, {add, multiply}
 
 # index.fl
-import math, {add, multiply} from ./math
+import math, {add, multiply} from './math'
 
 math.add 4 5 # 9
 multiply 4 5 # 20
@@ -99,7 +99,7 @@ let math <- (flipSign, inverse)
 exportSyntax math
 
 # index.fl
-importSyntax math from ./math
+importSyntax math from './math'
 
 ~5 # -5
 5' # 0.2
@@ -108,7 +108,7 @@ importSyntax math from ./math
 The module system looks in one of three locations depending on usage
 
 ```fl
-import something from library # node_modules
-import something from ./file  # relative
-import window                 # JS intertop
+import something from 'library' # node_modules
+import something from './file'  # relative
+import window                   # JS intertop
 ```
