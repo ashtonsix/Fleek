@@ -2,7 +2,7 @@
 
 Operators let you create custom syntax for your program or library.
 
-Operators accept a fixed number of arguments & must have explicit interfaces, any type or syntax collision with another defined operator precludes successful compiling.
+Operators accept a fixed number of arguments & must have explicit interfaces, any type or syntax conflict with another defined operator precludes successful compiling.
 
 ```fl
 : (Any, Any) => Number
@@ -15,16 +15,16 @@ Operator{__ xor __}, \((_0 ? !_1 : _1) ? 1 : 0)
 0 xor 0 # 0
 ```
 
-Operators that collide can be bundled in lists, the first operator to be matched is used.
+Operators that conflict can be bundled in lists, the first operator to be matched is used.
 
 ```fl
 let listComprehension <- (
+  : (Function, Array) => Array
+  Operator{for __ in __}, \(listComprehension.0 (..., \(true)))
   : (Function, Array, Function) => Array
   Operator{for __ in __ if __}, \(f0, arr, f1), (
     arr -> map f0 -> filter f1
   )
-  : (Function, Array) => Array
-  Operator{for __ in __}, \(listComprehension.0 (..., \(true)))
 )
 
 for \(_ + 2) in [1 2 3]          # 3 4 5
@@ -32,6 +32,7 @@ for \(_ + 2) in 1..9 if \(_ < 7) # 3 4 5 6
 
 exportSyntax {listComprehension}
 ```
+
 
 Precedence is inversely proportional to how "grabby" an operator is:
 
@@ -49,17 +50,19 @@ In a tie the operator on the left is considered to have higher precedence. By de
 let lowPrecedenceOp <- Operator{OP __}, (_):3
 ```
 
-## Collisions
+You can use `__1` to indicate the operator should grab one symbol only. `__1 . __1` might match `a (b.c)`
 
-Operators collide if this function returns true:
+## Conflicts
+
+Operators conflict if this function returns true:
 
 ```js
 // Example:
-// operatorsCollide(
-//   {syntax: 'for __ in __', interfaces: [FunctionInterface, ArrayInterface]},
-//   {syntax: 'for __ in __ if __', interfaces: [FunctionInterface, ArrayInterface, FunctionInterface]}
+// operatorsConflict(
+//   {syntax: 'for __ in __', precedence: 5, interfaces: [FunctionInterface, ArrayInterface]},
+//   {syntax: 'for __ in __ if __', precedence: 5, interfaces: [FunctionInterface, ArrayInterface, FunctionInterface]}
 // )
-const operatorsCollide = (op1, op2) => {
+const operatorsConflict = (op1, op2) => {
   const sharesToken = (s1, s2) => {
     s1 = new Set(s1)
     for (let i = 0; i < s2.length; i++) {
@@ -68,14 +71,14 @@ const operatorsCollide = (op1, op2) => {
   }
   const s1 = op1.syntax.split('__').map(str => str.trim())
   const s2 = op1.syntax.split('__').map(str => str.trim())
-  const syntaxEqual = s1.join('__') === s2.join('__')
+  const syntaxEqual = s1.join('__') === s2.join('__') && op1.precedence === op2.precedence
   if (sharesToken(s1, s2) && !syntaxEqual) return true
-  if (syntaxEqual) return interfacesCollide(op1.interface, op2.interface)
+  if (syntaxEqual) return interfacesConflict(op1.interface, op2.interface)
   return false
 }
 ```
 
-The [interface guide](./4_interfaces.md.md#usage) describes interface collisions.
+The [interface guide](./4_interfaces.md.md#usage) describes interface conflict.
 
 ## Context
 

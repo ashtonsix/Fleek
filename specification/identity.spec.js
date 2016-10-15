@@ -55,17 +55,17 @@ describe('creation', () => {
 })
 
 describe('access', () => {
-  it('should not access before creation', () => {
+  it('should be empty before creation', () => {
     const program = `(value, let value <- 6)`
-    expect(() => fleek(program)).toThrow()
+    expect(fleek(program)).toEqual(`((), @value)`)
   })
   describe('scope', () => {
     it('should not access in a lower scope', () => {
       const program = `
         (let value <- 6)
-        value
+        return <- value
       `
-      expect(() => fleek(program)).toThrow()
+      expect(fleek(program)).toEqual('()')
     })
     it('should access in a higher scope', () => {
       const program = `

@@ -57,8 +57,8 @@ Interface
 : Node
 let node <- {name: 'Abyss', id: 'dy26fo7bic', other: 5}
 
-collides Number String   # 0
-collides \{min 0} Number # 1
+conflicts Number String   # 0
+conflicts \{min 0} Number # 1
 
 matches \{min 0} 5       # 1
 matches \{min 0} -2      # 0
