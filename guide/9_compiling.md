@@ -49,7 +49,7 @@ let reducer <- ${1}
 program.split('').reduce(({protoAST, symbolBuffer, expressionBuffer, contextStack}, char) => { /* ... */ })
 ```
 
-> Note: `WHITESPACE` symbols, range accounting & operator have been ommitted for brevity
+> Note: `WHITESPACE` symbols & range accounting have been ommitted for brevity
 
 Example symbol definitions:
 
