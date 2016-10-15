@@ -9,7 +9,7 @@ It features a hybrid interface system that balances flexibility & safety, in add
 * Reactive streams
 * Transaction-based intertop
 * High-performance tensors
-* Macro-based operators & contexts
+* Macro-based operators
 * Lisp-inspired lists
 * Distributed runtime
 * And more...

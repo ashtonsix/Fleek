@@ -4,10 +4,10 @@
 
 ## Formats
 
-Fleek can output one of two formats:
+Fleek can output code as either:
 
-* annotated S-expressions (intermediate, for alternative runtimes)
-* compiled JavaScript code
+1. annotated S-expressions (for alternative platforms)
+2. compiled JavaScript code
 
 ## Parsing
 
@@ -143,57 +143,65 @@ Interface
 
 ### Stage 2
 
-Next we resolve operator associativity for each expression. Starting with the lowest precedence operators we can recursively nest the symbols. Symbols collapse left so we create a "full nesting". Convert symbol-based expressions into S-expressions. Then inline linked expressions.
+Stage 2 transforms the protoAST symbol-based expressions into one S-expression in a few simple steps.
+
+Observe each operators associativity (lowest precedence first) & recursively nest symbols. Nest IDs last (symbols on right have higher precedence).
 
 ```js
 ['ID@let', 'ID@Counter', 'OP@<-', 'FUNCTION@0,15:4,1'] =>
-['OP@<-', [['ID@let', 'ID@Counter'], ['FUNCTION@0,15:4,1']]] =>
+['OP@<-', [['ID@let', ['ID@Counter']], ['FUNCTION@0,15:4,1']]]
+```
+
+Convert to S-expressions, then inline linked expressions starting from the root.
+
+```
 ['OP@<-', [['ID@let', ['ID@Counter']], ['FUNCTION@0,15:4,1']]] =>
 '(OPERATOR@<- (ID@let (ID@Counter), FUNCTION@0,15:4,1))' =>
 '(OPERATOR@<- (ID@let (ID@Counter), FUNCTION@( ... )))'
 ```
 
-### Stage 3
+## Interfaces
 
-By this point we have a lot of information about our program, but there's a lot we don't know: id's could be any kind of value, we don't know where our function calls are, operators are in superpositions, and so on. Stage 3 includes many incremental steps.
+By this point we have a lot of information about our program, but there's a lot we don't know. The biggest problem is we don't know what each ID refers to, we could be dealing with functions, numbers, any type essentially.
 
+Let's define an interface for each identity & function.
 
-#### #1
+### Stage 1
 
-Some native operators like flow right `->` & flow left `<-` can be evaluated at compile time because they only have one possible result.
+Evaluate native list-rearranging operators like flow right `->` & flow left `<-` at compile time to simplify program.
 
-Some ID symbols like `let` & `return` can't be overwritten by user-definitions so we can also resolve these now.
+Resolve natively defined IDs like `let` & `return`.
 
 ```js
 '(OPERATOR@<- (ID@let (ID@Counter), FUNCTION@( ... )))' =>
 '(FUNCTION@let (ID@Counter, FUNCTION@( ... )))'
-
-`(OPERATOR@+ (NUMBER@4, NUMBER@2))` =>
-`(NUMBER@6)`
 ```
 
-#### #2
+### Stage 2
 
-For each ID symbol, check for declarations/assignments in previous siblings/parents, sort into:
-
-* No declarations - create identity for native value or `()` if none found
-* "Maybe" declarations - found re-assignments inside functions or conditional context
-* Definite declarations - no "maybe" declarations, store each identity declaration
+Identify each assignment and store it's location as a path:
 
 ```js
-`(FUNCTION@let (ID@fifty, NUMBER@50),
-  OPERATOR@+ (ID@fifty, NUMBER@5))` =>
+`(FUNCTION@let (ID@fifty, NUMBER@50))` =>
+{fifty: ['0.1.1']} // 'NUMBER@50'
+```
+
+For each ID reference (any non-assignment), classify as:
+
+* No value assigned - Replace with empty list
+* One possibility - Link reference to assignment
+* Multiple possibilities - Leave symbol alone (??)
+
+```js
 {
-  identities: {fifty: ['0,1,1']} // path to 'NUMBER@50'
+  assignments: {fifty: ['0.1.1']}
+  program: `(
+    FUNCTION@let (ID@fifty, NUMBER@50),
+    OPERATOR@+ (ID@fifty:0.1.1, NUMBER@5)
+  )`
 }
 ```
 
-Go back to the step 1, treating identities as values in place where possible & updating identity paths if needed.
+### Stage 3
 
-```js
-`(FUNCTION@let (ID@fifty, NUMBER@50), NUMBER@55)`
-```
-
-#### #3
-
-We've simplified our program, can grab interfaces for all native functions & operators (ignore user-defined interfaces for now as we may end up disproving them later) & start generating interfaces for the rest of our program with a depth-first-search.
+We can start generating interfaces.
