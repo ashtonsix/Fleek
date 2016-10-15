@@ -26,7 +26,7 @@ The following documentation is available:
 Here is a simple counter. Clicking the buttons updates the value & re-renders the view.
 
 ```fl
-import {querySelector, mount} from '@fleek/dom'
+import {querySelector, mount, Element} from '@fleek/dom'
 importSyntax {tags} from '@fleek/dom'
 
 : Stream (Number)

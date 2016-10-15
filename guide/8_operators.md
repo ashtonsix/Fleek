@@ -15,7 +15,7 @@ Operator{__ xor __}, \((_0 ? !_1 : _1) ? 1 : 0)
 0 xor 0 # 0
 ```
 
-Operators that conflict can be bundled in lists, the first operator to be matched is used.
+Operators that conflict can be bundled in lists, the first operator is used in a conflict.
 
 ```fl
 let listComprehension <- (
@@ -32,7 +32,6 @@ for \(_ + 2) in 1..9 if \(_ < 7) # 3 4 5 6
 
 exportSyntax {listComprehension}
 ```
-
 
 Precedence is inversely proportional to how "grabby" an operator is:
 
@@ -51,6 +50,8 @@ let lowPrecedenceOp <- Operator{OP __}, (_):3
 ```
 
 You can use `__1` to indicate the operator should grab one symbol only. `__1 . __1` might match `a (b.c)`
+
+Most native operators extract the first value when passed a list
 
 ## Conflicts
 

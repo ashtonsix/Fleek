@@ -61,8 +61,8 @@ let name <- 'Jim' # @name
 # Whitespace at the start of new lines is trimmed to match the shortest line.
 
 '
-  A happy ending..
-    depends on when you stop your story
+    A happy ending..
+      depends on when you stop your story
 '
 #~
 A happy ending..

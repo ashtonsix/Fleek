@@ -51,7 +51,7 @@ export const interval = (emit, every) => {
 
 import {interval as intervalJS} from './interval.js'
 
-: (Function, Number) => Stream (Empty)
+: (Function, \{min 0}) => Stream (Empty)
 let interval <-
 Emitter
 \(emit, every), (

@@ -190,7 +190,7 @@ For each ID reference (any non-assignment), classify as:
 
 * No value assigned - Replace with empty list
 * One possibility - Link reference to assignment
-* Multiple possibilities - Leave symbol alone (??)
+* Multiple possibilities - Leave symbol alone (Can we do more?)
 
 ```js
 {
