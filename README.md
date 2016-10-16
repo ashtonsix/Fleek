@@ -21,6 +21,12 @@ The following documentation is available:
 * Specification - comprehensive test suite
 * Examples
 
+## Why?
+
+Functional languages are great at finding bugs upfront, but can be really restrictive because they focus too much on what can be mathematically proven with static type checking. Languages like TypeScript combine static types with user assertions which is very flexible, but ignores lots of code & can't reason about how "complete" an interface is.
+
+Fleek also combines static types & user assertions but enforces full interface coverage. Given the assertions are accurate the entire program can be proved correct. Every interface is like a comprehensive unit testing suite so when something goes wrong you know exactly how.
+
 ## Quick Sample
 
 Here is a simple counter. Clicking the buttons updates the value & re-renders the view.

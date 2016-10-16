@@ -2,6 +2,14 @@
 
 > Read the [array](./1_types.md#arrays) & [interface](./3_interfaces.md) guides if you haven't already.
 
+## Why?
+
+Browsers (via JavaScript) have great performance in the general case, but can't match other languages in specific niches. Python (via NumPy) & Octave (MATLAB basically) both have high-performance multi-dimensional arrays (tensors) that use GPU acceleration, multi-threading, vectorization, hand-optimized assembly, etc. yielding ~30x speed improvements & form the backbone of scientific computing.
+
+The web supports some of this stuff, but only through obtuse technologies like PNacl, WebCL, asm.js, webAssembly, etc. that are often specific to one browser. Tensors abstract over them to close the gap & make scientific computing viable on the web.
+
+## Usage
+
 A `Tensor` is a rectangular `Array` that contains only numbers & does high-performance computation.
 
 ```fl
