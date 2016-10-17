@@ -63,9 +63,11 @@ conflicts \{min 0} Number # 1
 matches \{min 0} 5       # 1
 matches \{min 0} -2      # 0
 matches \{min 0} 'Test'  # 0
+```
 
-# Interface arguments
+Interfaces can accept & compare arguments
 
+```fl
 let Matrix <-
 Interface
 \(rows, cols), {
@@ -92,7 +94,7 @@ let multiply <- \(m0, m1), ( ... )
 
 Function interfaces append their runtime arguments to the interface arguments you provide
 
-```
+```fl
 : (Number, Number) => Number
 let add <- \(_0 + _1)
 
@@ -115,16 +117,20 @@ Interface
 let repeat <- \(repetitions, str) -> ( ... )
 
 repeat 3 'ab' # 'ababab'
+```
 
-# Spreading
+**Spreading**
 
+```fl
 : (Array, ...Number) => Array
 let omitAt <- \( #~ ... ~# )
 
 omitAt 0..8 3 4 6 # [0 1 2 5 7 8]
+```
 
-# Recursion
+**Recursion**
 
+```fl
 let BinaryTree <-
 Interface
 \{

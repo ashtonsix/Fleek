@@ -78,7 +78,9 @@ Emitter
 let fetch <- \(fetchTransaction (...) $> take 1)
 
 export fetch
+```
 
+```fl
 # index.fl
 
 import fetch from './fetch'

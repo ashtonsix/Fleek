@@ -18,21 +18,15 @@ The following topics are not covered in this guide:
 Every value has a unique identity. The identity is required for updating values.
 
 ```fl
-# Creation
-
 let number <- 6              # @number
 : String
 let string <- 'Hello world!' # @string
-
-# Access
 
 @number           # @number
 @number.value     # 6
 @number.type      # 'Number'
 @number.interface # ()
 @string.interface # String
-
-# Updating
 
 @number <- 3      # @number
 number            # 3
@@ -42,18 +36,20 @@ number            # 3
 
 ## Control Flow
 
-```fl
-# Conditions
+**Conditions**
 
+```fl
 1 ? 'True'           # 'True'
 0 ? 'True'           # ()
 0 ? 'True' : 'False' # 'False'
 0 | 'True'           # 'True'
 'True' | 0           # 'True'
 0 & 'True'           # 0
+```
 
-# Switching
+**Switching**
 
+```fl
 let key <- 'Unicorn'
 switch
   key
@@ -75,7 +71,9 @@ let add <- \(_0 + _1)
 let multiply <- \(_0 * _1)
 let math <- {add, multiply}
 export math, {add, multiply}
+```
 
+```fl
 # index.fl
 import math, {add, multiply} from './math'
 
@@ -97,7 +95,9 @@ Operator{__'}, \(1 / _)
 
 let math <- (flipSign, inverse)
 exportSyntax math
+```
 
+```fl
 # index.fl
 importSyntax math from './math'
 

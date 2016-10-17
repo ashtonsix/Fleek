@@ -2,59 +2,75 @@
 
 > Make sure you understand [lists](./1_types.md#lists) before reading this.
 
+**Calling**
+
 You can access the original argument list with `(...)`
 
 ```fl
-# Calling
-
 let id <- \(...) # @id
 id 1 2 3         # (1 2 3)
 id <- 1 2 3      # (1 2 3)
 1 2 3 -> id      # (1 2 3)
 3 -> id 1 2      # (1 2 3)
+```
 
-# Defining
+**Defining**
 
-#~
 `_` or `_0` is the first argument, `_1` is the second...
-~#
 
+```fl
 \(_ + 1) 1            # 2
+
 let add <- \(_0 + _1) # add
 add 3 4               # 7
 ```
 
+**Defining with arguments**
+
 ```fl
-# Defining with arguments
-
 \(x), (x + 1) 1       # 2
+```
 
-# Defaults
+**Defaults**
 
+```fl
 let inc <- \(x, y 1), (x + y) # @inc
+
 inc 5                         # 6
 inc 5 3                       # 8
+```
 
-# Destructuring
+**Destructuring**
 
-let getOlder <- \
-  ({name, age}, years 10),
-  ({name, age: age + years})     # @getOlder
+```fl
+let tim <- {name: 'Tim', age: 9} # @tim
+let getAge <- \({age}), (age)    # @getAge
 
-let {name, age} <-
-  getOlder {name: 'Tim', age: 9} # (@name, @age)
-age                              # 19
+getAge tim                       # 9
 
-# Spreading
+let {name, age} <- tim           # (@name, @age)
+name                             # 'Tim'
 
-\([girl, boy], ...rest), (
-  (girl, boy)
-  rest
-) (
-  ['Kaori', 'Kousei']
-  'Midget', 'army'
-)
-# == (('Kaori' 'Kousei') ('Midget' 'army'))
+let [first, second] <- [1 2 3]   # (@first, @second)
+second                           # 2
+```
+
+**Spreading**
+
+```fl
+let f <- \(first, ...rest),
+  (first, rest)              # @f
+
+f 'Kaori' 'Kousei' 'Tsubaki' # ('Kaori', ('Kousei', 'Tsubaki'))
+```
+
+**Optional arguments**
+
+```fl
+let chunk <- \(size? 1, arr), ( #~ ... ~# )
+
+chunk 0..7   # 0; 1; 2; 3; 4; 5; 6; 7
+chunk 3 0..7 # 0  1  2; 3  4  5; 6  7
 ```
 
 ## Currying
@@ -66,12 +82,13 @@ Calling a function with less arguments than required returns a partially applied
 let add <- \(_0 + _1)  # @add
 let add5 <- add 5      # @add5
 add5 4                 # 9
+```
 
-# Overriding arity
+Overriding arity
 
+```fl
 let func <- \(_0 _1):1 # @func
 func 5                 # (5 ())
-
 ```
 
 The placeholder / double underscore operator `__` is useful for changing argument order.

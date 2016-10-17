@@ -53,7 +53,7 @@ let render <- \(view), (
     view
 )
 
-: Stream
+: Stream ()
 reducer -> Counter -> render
 ```
 
