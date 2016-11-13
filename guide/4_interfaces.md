@@ -29,8 +29,7 @@ This example program would compile, but break if `mysteryNumberGenerator` return
 ```fl
 import mysteryNumberGenerator from 'mysteryNumberGenerator'
 
-: () => Number
-let myFunction <- \(), (
+let myFunction <- \() :: Number, (
   let number <- mysteryNumberGenerator ()
   return <-
     number <= 1 ? 100 : 'Hello'
@@ -41,21 +40,19 @@ myFunction ()
 
 ## Usage
 
-The interface context has it's own native library - functions can fail & accept any arguments.
+The interface context uses a subset of the native library.
 
 ```fl
 let Node <-
-Interface
 \{
   Map
   name: String
   id: String
   \(length _.id): equalTo 10
-  \(allRemaining _): Any
+  (...): Any
 }
 
-: Node
-let node <- {name: 'Abyss', id: 'dy26fo7bic', other: 5}
+let node :: Node <- {name: 'Abyss', id: 'dy26fo7bic', other: 5}
 
 conflicts Number String   # 0
 conflicts \{min 0} Number # 1
@@ -69,52 +66,44 @@ Interfaces can accept & compare arguments
 
 ```fl
 let Matrix <-
-Interface
-\(rows, cols), {
+\{rows, cols}, {
   Array
   all Number
   \(dimension _): lessThanEqual 2
-  \(length 0 _): equalTo rows
-  \(length 1 _): equalTo cols
-  allMatch 0 length # Every row is the same length
-  allMatch 1 length
+  \(length _ 0): equalTo rows
+  \(length _ 1): equalTo cols
+  isUniform length 0
+  isUniform length 1
 }
 
-: Matrix (__ 1)
-let columnVector <- [5; 6; 4]
+let columnVector :: Matrix (__ 1) <- [5; 6; 4]
 
 # Argument comparison
 
-: (
-:   Matrix (m a)
-:   Matrix (a n)
-: ) => Matrix (m n)
-let multiply <- \(m0, m1), ( ... )
+let multiply <- \(
+  m0 :: Matrix (m, a)
+  m1 :: Matrix (a, n)
+)    :: Matrix (m, n),
+( #~ ... ~# )
 ```
 
-Function interfaces append their runtime arguments to the interface arguments you provide
+Return interfaces accept explicit arguments followed my arguments passed to the function.
 
 ```fl
-: (Number, Number) => Number
-let add <- \(_0 + _1)
-
 # Function arguments
 
-: Number => Tensor \(_, _)
-let eye <- \(size), ( ... )
+let eye <- \(size :: Number) :: Tensor \(_, _), ( #~ ... ~# )
 
 eye 2 # 1 0
       # 0 1
 
 let RepeatedString <-
-Interface
-\(repetitions, str), {
+\{repetitions, str}, {
   String,
   \(length _): repetitions * (length str)
 }
 
-: (Number, String) => RepeatedString
-let repeat <- \(repetitions, str) -> ( ... )
+let repeat <- \(repetitions, str) :: RepeatedString -> ( ... )
 
 repeat 3 'ab' # 'ababab'
 ```
@@ -122,8 +111,7 @@ repeat 3 'ab' # 'ababab'
 **Spreading**
 
 ```fl
-: (Array, ...Number) => Array
-let omitAt <- \( #~ ... ~# )
+let omitAt <- \(arr :: Array, ...indices :: Number) ( #~ ... ~# )
 
 omitAt 0..8 3 4 6 # [0 1 2 5 7 8]
 ```
@@ -132,7 +120,6 @@ omitAt 0..8 3 4 6 # [0 1 2 5 7 8]
 
 ```fl
 let BinaryTree <-
-Interface
 \{
   parent: BinaryTree
   left: BinaryTree
@@ -156,17 +143,9 @@ Fleek has an interface for every [type](./1_types.md) in addition to: `Any`, `Em
 * `Empty` matches the empty list only
 * `Tensor` is described inside the [tensor guide](./5_tensors.md)
 
-Every interface also accepts the empty list by default, which makes static analysis easier & keeps your application flexible. You can explicitly disallow empty lists.
+Every native function & operator accepts empty lists, either by returning a default or the identity of another argument.
 
 ```fl
-: \{Any, not Empty}
-```
-
-Every native function & operator handles empty lists, either by returning an empty list or the identity of another argument.
-
-```fl
-> 4 + ()
-4
-> map \(_) ()
-()
+4 + ()      # 4
+map \(_) () # []
 ```

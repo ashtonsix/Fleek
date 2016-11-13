@@ -2,7 +2,14 @@
 
 > Make sure you understand [lists](./1_types.md#lists) before reading this.
 
+Functions accept a list of arguments & return a list. You can think of functions as lists waiting to be evaluated.
+
 **Calling**
+
+```fl
+add (1, 5) # 6
+add 1 5    # 6
+```
 
 You can access the original argument list with `(...)`
 
@@ -69,8 +76,8 @@ f 'Kaori' 'Kousei' 'Tsubaki' # ('Kaori', ('Kousei', 'Tsubaki'))
 ```fl
 let chunk <- \(size? 1, arr), ( #~ ... ~# )
 
-chunk 0..7   # 0; 1; 2; 3; 4; 5; 6; 7
-chunk 3 0..7 # 0  1  2; 3  4  5; 6  7
+chunk 0..7   # [0; 1; 2; 3; 4; 5; 6; 7]
+chunk 3 0..7 # [0 1 2; 3 4 5; 6 7]
 ```
 
 ## Currying
@@ -88,7 +95,7 @@ Overriding arity
 
 ```fl
 let func <- \(_0 _1):1 # @func
-func 5                 # (5 ())
+func 5                 # (5, ())
 ```
 
 The placeholder / double underscore operator `__` is useful for changing argument order.
@@ -99,7 +106,7 @@ let divideBy2 <- divide __ 2 # @divideBy2
 divideBy2 8                  # 4
 ```
 
-Lists have their own arity equal to number of placeholders inside (cannot override). The arity of a partially applied function is the maximum of the argument's & function's unmodified arity.
+Lists have their own arity equal to number of placeholders inside (cannot override). The arity of a partially applied function is the maximum of the argument's & function's arity.
 
 ## Composition
 
@@ -107,15 +114,13 @@ Flow right `->` takes a list from the left & appends it to a list on the right.
 
 ```fl
 (arg1, arg2) -> func (arg0) # func (arg0, arg1, arg2)
-
-f0 (a00, a01) -> f1 (a10)   # f1 (a10, f0 (a00, a01))
 ```
 
-Flow left `<-` does nothing, but has low precedence - use it to ensure everything to the right is evaluated first.
+Flow left `<-` does the opposite.
 
 ```fl
-f1 a10 a00 a01 -> f0    # f0 (f1 (a10, a00, a01))
-f1 a10 <- a00 a01 -> f0 # f1 (a10, f0 (a00, a01))
+f0 (arg0) f1 (arg1, arg2)    # == f0 (arg0, f1, (arg1, arg2))
+f0 (arg0) <- f1 (arg1, arg2) # == f0 (arg0, f1 (arg1, arg2))
 ```
 
 A sequence of functions linked with flow operators is called a "chain".
@@ -139,18 +144,14 @@ getYoungest users # 'Pebbles is 1'
 
 ## Polymorphism
 
-A list of functions behaves like a function itself. When called the first function which matches the argument's interface is used.
+Use `\\` to bundle a list of functions. The first function matching the argument's interface is used.
 
 ```fl
-let add <- (
-  : (Number, Number) => Number
-  \( ... )
-  : (String, String) => String
-  \( ... )
-  : (Tensor, Number) => Tensor
-  \( ... )
-  : (Tensor, Tensor) => Tensor
-  \( ... )
+let add <- \\(
+  \(x :: Number, y :: Number) :: Number, ( #~ ... ~# )
+  \(x :: String, y :: String) :: String, ( #~ ... ~# )
+  \(x :: Tensor, y :: Number) :: Tensor, ( #~ ... ~# )
+  \(x :: Tensor, y :: Tensor) :: Tensor, ( #~ ... ~# )
 )
 
 add 4 5              # 9
@@ -158,5 +159,3 @@ add 'Hello' 'world!' # 'Hello world!'
 add [1 2] 1          # 2 3
 add [1 2] [2 3]      # 3 5
 ```
-
-You can alternatively use an unrestrictive interface & write branching logic inside your functions.

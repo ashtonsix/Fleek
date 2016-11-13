@@ -18,18 +18,18 @@ The following topics are not covered in this guide:
 Every value has a unique identity. The identity is required for updating values.
 
 ```fl
-let number <- 6              # @number
-: String
-let string <- 'Hello world!' # @string
+let number <- 6   # @number
 
 @number           # @number
 @number.value     # 6
 @number.type      # 'Number'
 @number.interface # ()
-@string.interface # String
 
 @number <- 3      # @number
 number            # 3
+
+let str :: String <- 'Hello world!' # @string
+@string.interface                   # String
 ```
 
 [Streams](./streams.md) have an additional identity you can access with the dollar `$` operator.
@@ -63,7 +63,7 @@ switch
 
 ## Modules
 
-Every export in your program's entry file requires an explicit [interface](./4_interfaces.md)
+Every export in your program's entry file should have an explicit [interface](./4_interfaces.md)
 
 ```fl
 # math.fl
@@ -91,7 +91,7 @@ Operator{~ __}, \(_ * -1)
 
 : Number => Number
 let inverse <-
-Operator{__'}, \(1 / _)
+Operator{__`}, \(1 / _)
 
 let math <- (flipSign, inverse)
 exportSyntax math
@@ -102,7 +102,7 @@ exportSyntax math
 importSyntax math from './math'
 
 ~5 # -5
-5' # 0.2
+5` # 0.2
 ```
 
 The module system looks in one of three locations depending on usage

@@ -51,7 +51,7 @@ false    # 0
 **Templates**
 
 ```fl
-let name <- 'Jim' # @name
+let name <- 'Jim' # @name: 'Jim'
 'Hello {name}!'   # 'Hello Jim!'
 ```
 
@@ -77,29 +77,29 @@ A happy ending..
 ## Arrays
 
 ```fl
-[2 4 6]                 # 2 4 6
-1..3                    # 1 2 3
-0..2..8                 # 0 2 4 6 8
+[2 4 6]                 # [2 4 6]
+1..3                    # [1 2 3]
+0..2..8                 # [0 2 4 6 8]
 
-let numbers <- 2..4..10 # @numbers
+let numbers <- 2..4..10 # @numbers: [2 4 6 8 10]
 
 numbers -> length       # 5
 numbers.1               # 4
 
-numbers. ..2            # 2 4
-numbers. 2..            # 6 8 10
-numbers. 1..-1          # 4 6 8
+numbers. ..2            # [2 4]
+numbers. 2..            # [6 8 10]
+numbers. 1..-1          # [4 6 8]
 
-[1 2 3]:[4]             # 1 2 3 4
-1:2:3:4                 # 1 2 3 4
+[1 2 3]:[4]             # [1 2 3 4]
+1:2:3:4                 # [1 2 3 4]
 ```
 
 **Iteration**
 
 ```fl
-let numbers <- 2..4..10
-numbers -> map \(_ / 2)                # 1 2 3 4 5
-numbers -> filter \(_ > 5)             # 6 8 10
+let numbers <- 2..4..10                # @numbers: [2 4 6 8 10]
+numbers -> map \(_ / 2)                # [1 2 3 4 5]
+numbers -> filter \(_ > 5)             # [6 8 10]
 numbers -> reduce \(pv, v), (pv + v) 0 # 30
 
 let total <- 0
@@ -121,25 +121,26 @@ zeros 2 3        # [0 0 0; 0 0 0]
 ones 2 2 2       # [[1 1] [1 1]; [1 1] [1 1]]
 reshape 2 3 1..6 # [1 2 3; 4 5 6]
 
-let numbers <- [1 2; 3 4; 5 6] # @numbers
+let numbers <- [1 2; 3 4; 5 6] # @numbers: [1 2; 3 4; 5 6]
 numbers.(0, 0)                 # 1
 numbers.(2, 1)                 # 6
-numbers.(1, ..)                # 3 4; 5 6
+numbers.(1, ..)                # [3 4]
 ```
 
 **Iteration**
 
 Many iterators accept the dimension as an optional argument.
 
-`0` = every value, `1` = rows, `2` = columns, ..., `-1` = rows reversed.
+`0` = every value, `1` = rows, `2` = columns, ...
 
 ```fl
-[1 2 3; 4 5 6] -> map \(_ + 3) # 4 5 6; 7 8 9
+[1 2 3; 4 5 6] -> map \(_ + 3) # [4 5 6; 7 8 9]
+```
 
-let couples <- ['Jessica' 'Rakesh'; 'Tim' 'Rihanna'] # @couples
+```fl
+let couples <- ['Jessica' 'Rakesh'; 'Tim' 'Rihanna']
 
-couples -> map \('{_.0} & {_.1}') 1                  # 'Jessica & Rakesh'
-                                                     # 'Tim & Rihanna'
+couples -> map \('{_.0} & {_.1}') 1 # ['Jessica & Rakesh'; 'Tim & Rihanna']
 ```
 
 ## Maps
@@ -147,14 +148,14 @@ couples -> map \('{_.0} & {_.1}') 1                  # 'Jessica & Rakesh'
 Maps associate values with keys.
 
 ```fl
-let student <- {age: 9, name: 'Arthur'} # @student
+let student <- {age: 9, name: 'Arthur'} # @student: {age: 9, name: 'Arthur'}
 
 student.age                             # 9
 student.('age', 'name')                 # (9 'Arthur')
 student -> omit ['age']                 # {name: 'Arthur'}
 
-student -> mapKeys \('{_}{_}')          # {ageage: 9, namename: 'Arthur'}
-{x: 5, y: 2} -> map \(_ * 2)            # {x: 10, y: 4}
+student -> mapKeys \(repeat 2 _)        # {ageage: 9, namename: 'Arthur'}
+{x: 5, y: 2} -> mapValues \(_ * 2)      # {x: 10, y: 4}
 ```
 
 **Computed keys**
@@ -171,7 +172,7 @@ let currentYear <- 2016
 
 let creatorOfFleek <- {
   birthDate: 1993,
-  get age: \(currentYear - _.born)
+  get age: \(currentYear - _.birthDate)
   set age: \
     (value, self),
     (@self.birthDate <- currentYear - value)
@@ -188,11 +189,11 @@ creatorOfFleek.birthDate   # 1916
 let myObject -> {
   set \
     (key, value, self),
-    (@self.(key) <- value + 1)
+    (@self.(key) <- value / 2)
 }
 
 myObject.x <- 4 # @myObject
-myObject.x      # 5
+myObject.x      # 2
 ```
 
 ### Circular data structures
@@ -222,7 +223,7 @@ nodes.object.self.self.value # 10
 
 Any valid Fleek program is a list.
 During compilation programs are transformed into S-expressions.
-During runtime programs "collapse" expression-by-expression, from right-to-left.
+During runtime programs "collapse" expression-by-expression.
 
 ```fl
 let number <- 4 * 5 + 6 / 3
@@ -255,19 +256,7 @@ Indentation affects list nesting
 \(let temp <- _, return <- temp + 2) 2 # 4
 ```
 
-Functions accept a list of arguments & return a list. You can think of functions as lists waiting to be evaluated.
-
-Using spaces to seperate arguments is syntactic sugar only.
-
-```fl
-let add <- (_0, _1)
-
-add 1 5    # 6
-add (1, 5) # 6
-
-```
-
-A list containing one value is treated like a value.
+A list containing one value is equivalent to that value.
 
 ```fl
 (1) + 2    # 3

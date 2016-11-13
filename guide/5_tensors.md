@@ -10,81 +10,72 @@ The web supports some of this stuff, but only through obtuse technologies like P
 
 A `Tensor` is a rectangular `Array` that contains only numbers & does high-performance computation.
 
+`Fleek` has native element-wise & linear algebra operators.
+
 **Creation**
 
 ```fl
-[1 2 3; 2 4 6]       # 1 2 3
-                     # 2 4 6
+[1 2 3; 2 4 6]       # [1 2 3;
+                     #  2 4 6]
 
-reshape 2 3 1..6     # 1 2 3
-                     # 4 5 6
+reshape 2 3 1..6     # [1 2 3;
+                     #  4 5 6]
 
-zeros 2 3            # 0 0 0
-                     # 0 0 0
+zeros 2 3            # [0 0 0;
+                     #  0 0 0]
 
-ones 2 2 3           # [1 1 1] [1 1 1]
-                     # [1 1 1] [1 1 1]
+ones 2 2 3           # [[1 1 1] [1 1 1];
+                     #  [1 1 1] [1 1 1]]
 
-eye 3                # 1 0 0
-                     # 0 1 0
-                     # 0 0 1
+eye 3                # [1 0 0;
+                     #  0 1 0;
+                     #  0 0 1]
 ```
 
-**Scalars**
+**Element-wise operators**
 
 ```fl
-[1 2; 2 4] + 2       # 3 4; 4 6
+[1 2; 2 4] + 2      # [3 4; 4 6]
+[1 2; 2 4] * 2      # [2 4; 4 8]
 
-[1 2; 2 4] * 2       # 2 4; 4 8
+[1 2; 2 4] * [1; 2] # [1 2; 4 8]
+[1 2; 2 4] * [1 2]  # [1 4; 2 8]
+
+[1 2; 2 4] ^ 2      # [1 4; 4 16]
 ```
 
-**Vectors**
+**Linear algebra operators**
 
 ```fl
-[1 2; 2 4] .* [1; 2] # 1 2; 4 8
+[1 2 5; 1 2 4] * [5; 2; 1] ** [5; 2; 1] # [14; 13]
 
-[1 2; 2 4] + [0 5]   # 1 7; 2 9
+[1 2; 2 4] ^^ 2                         # [5 10; 10 20]
 ```
 
-**Matrices**
+**Functions**
 
-```fl
-[1 2; 2 4] * [1; 2]  # 5; 10
-
-transpose [1 5; 2 4] # 1 2; 5 4
-
-inv [1 2; 2 3]       # -3 2; 2 -1
-
-pinv [1 2; 2 4]      # 0.04 0.08; 0.08 0.16
 ```
+transpose [1 5; 2 4] # [1 2; 5 4]
 
-**Mapping**
+inv [1 2; 2 3]       # [-3 2; 2 -1]
 
-```fl
-[1 2 3; 4 5 6] ->
-map \(_ > 3)      # 0 0 0; 1 1 1
+pinv [1 2; 2 4]      # [0.04 0.08; 0.08 0.16]
+
+let m <- [1 2 3; 4 5 6]
+
+m -> map \(_ > 3)    # [0 0 0; 1 1 1]
+m -> max 0           # [4 5 6]
+m -> min 1           # [1; 4]
+m -> sum             # [21]
+m -> sum 0           # [5 7 9]
 ```
 
 **Ranges**
 
 ```fl
-let m <- 1..81 -> reshape 9 9
+let m <- (1..81 -> reshape 9 9)
 
-m. (..3 7..)   #  7  8  9
-               # 16 17 18
-               # 25 26 27
-```
-
-**Reducing**
-
-```fl
-let m <- [1 2 3; 4 5 6]
-
-m -> max 0 # 4 5 6
-
-m -> min 1 # 1; 4
-
-m -> sum   # 21
-
-m -> sum 0 # 5 7 9
+m. (..3 7..)   # [ 7  8  9;
+               #  16 17 18;
+               #  25 26 27]
 ```
