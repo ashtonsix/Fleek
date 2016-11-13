@@ -85,13 +85,15 @@ multiply 4 5 # 20
 
 ```fl
 # math.fl
-: Number => Number
 let flipSign <-
-Operator{~ __}, \(_ * -1)
+  Op{~ __}, \
+  (x :: Number) :: Number,
+  (x * -1)
 
-: Number => Number
 let inverse <-
-Operator{__`}, \(1 / _)
+  Op{__ `}, \
+  (x :: Number) :: Number,
+  (1 / x)
 
 let math <- (flipSign, inverse)
 exportSyntax math

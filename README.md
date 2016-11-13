@@ -35,27 +35,25 @@ Here is a simple counter. Clicking the buttons updates the value & re-renders th
 import {querySelector, mount, Element} from '@fleek/dom'
 importSyntax {tags} from '@fleek/dom'
 
-: Stream (Number)
-let state <- ${0}
+let state :: Stream (Number) <- ${0}
 
-: Number => Element
-let Counter <- \(state), (
+let Counter <- \(state :: Number) :: Element, (
   div
     button {onClick: \($state <-- \(_ - 1))} '-'
     div state
     button {onClick: \($state <-- \(_ + 1))} '+'
 )
 
-: Element => ()
-let render <- \(view), (
+let render <- \(view :: Element) :: Empty, (
   mount
     querySelector 'body'
     view
 )
 
-: Stream ()
 state -> Counter -> render
 ```
+
+The interface annotations aren't needed here, they're just for clarity.
 
 ## Inspirations
 

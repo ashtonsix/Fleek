@@ -5,9 +5,10 @@ Operators let you create custom syntax for your program or library.
 Operators accept a fixed number of arguments & must have explicit interfaces, any interface or syntax conflict with another defined operator precludes successful compiling.
 
 ```fl
-let xor <- Op{__ xor __}, \
-(x :: Any, y :: Any) :: Number,
-((x ? !y : y) ? 1 : 0)
+let xor <-
+  Op{__ xor __}, \
+  (x :: Any, y :: Any) :: Number,
+  ((x ? !y : y) ? 1 : 0)
 
 1 xor 1 # 0
 1 xor 0 # 1
