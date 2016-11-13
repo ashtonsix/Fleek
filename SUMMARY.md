@@ -8,4 +8,3 @@
 * [Streams](guide/6_streams.md)
 * [Transactions](guide/7_transactions.md)
 * [Operators](guide/8_operators.md)
-* [Compiling](guide/9_compiling.md)
