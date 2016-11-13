@@ -100,7 +100,7 @@ numbers. 1..-1          # 4 6 8
 let numbers <- 2..4..10
 numbers -> map \(_ / 2)                # 1 2 3 4 5
 numbers -> filter \(_ > 5)             # 6 8 10
-numbers -> reduce 0 \(pv, v), (pv + v) # 30
+numbers -> reduce \(pv, v), (pv + v) 0 # 30
 
 let total <- 0
 let i <- 0
@@ -116,15 +116,15 @@ while \(i < (numbers -> length)) \(
 > You may be looking for the [tensor guide](./5_tensors.md)
 
 ```fl
-[2 4; 5 6]       # 2 4; 5 6
-zeros 2 3        # 0 0 0; 0 0 0
-ones  2 2 2      # [1 1] [1 1]; [1 1] [1 1]
-reshape 2 3 1..6 # 1 2 3; 4 5 6
+[2 4; 5 6]       # [2 4; 5 6]
+zeros 2 3        # [0 0 0; 0 0 0]
+ones 2 2 2       # [[1 1] [1 1]; [1 1] [1 1]]
+reshape 2 3 1..6 # [1 2 3; 4 5 6]
 
 let numbers <- [1 2; 3 4; 5 6] # @numbers
-numbers.(0 0)                  # 1
-numbers.(2 1)                  # 6
-numbers.(1 ..)                 # 3 4; 5 6
+numbers.(0, 0)                 # 1
+numbers.(2, 1)                 # 6
+numbers.(1, ..)                # 3 4; 5 6
 ```
 
 **Iteration**
@@ -138,7 +138,7 @@ Many iterators accept the dimension as an optional argument.
 
 let couples <- ['Jessica' 'Rakesh'; 'Tim' 'Rihanna'] # @couples
 
-couples -> map 1 \('{_.0} & {_.1}')                  # 'Jessica & Rakesh'
+couples -> map \('{_.0} & {_.1}') 1                  # 'Jessica & Rakesh'
                                                      # 'Tim & Rihanna'
 ```
 
@@ -150,10 +150,10 @@ Maps associate values with keys.
 let student <- {age: 9, name: 'Arthur'} # @student
 
 student.age                             # 9
-student.('age' 'name')                  # (9 'Arthur')
+student.('age', 'name')                 # (9 'Arthur')
 student -> omit ['age']                 # {name: 'Arthur'}
 
-student -> mapKeys \(_:_)               # {ageage: 9, namename: 'Arthur'}
+student -> mapKeys \('{_}{_}')          # {ageage: 9, namename: 'Arthur'}
 {x: 5, y: 2} -> map \(_ * 2)            # {x: 10, y: 4}
 ```
 
@@ -162,6 +162,37 @@ student -> mapKeys \(_:_)               # {ageage: 9, namename: 'Arthur'}
 ```fl
 let keyName <- 'theAnswer' # @keyName
 {(keyName): 42}            # {theAnswer: 42}
+```
+
+**Virtuals**
+
+```fl
+let currentYear <- 2016
+
+let creatorOfFleek <- {
+  birthDate: 1993,
+  get age: \(currentYear - _.born)
+  set age: \
+    (value, self),
+    (@self.birthDate <- currentYear - value)
+}
+
+creatorOfFleek.age         # 23
+@creatorOfFleek.age <- 100 # @creatorOfFleek
+creatorOfFleek.birthDate   # 1916
+```
+
+**Proxies**
+
+```fl
+let myObject -> {
+  set \
+    (key, value, self),
+    (@self.(key) <- value + 1)
+}
+
+myObject.x <- 4 # @myObject
+myObject.x      # 5
 ```
 
 ### Circular data structures
@@ -174,10 +205,17 @@ let object <- {value: 10} # @object
 object                    # {value: 10, self: {value: 10}}
 ```
 
-To represent, for example, a cyclic graph you might use `Map` keys to describe edges.
+To store, for example, a cyclic graph you might use virtuals to describe edges.
 
 ```fl
-let nodes <- {object: {value: 10, self: 'object'}}
+let nodes <- {}
+@nodes.object <- {
+  value: 10,
+  _self: 'object',
+  get self: \(nodes.(_._self))
+}
+
+nodes.object.self.self.value # 10
 ```
 
 ## Lists
@@ -217,11 +255,30 @@ Indentation affects list nesting
 \(let temp <- _, return <- temp + 2) 2 # 4
 ```
 
-Function arguments are lists, one list can pass multiple arguments at once. You can think of functions as lists waiting to be evaluated.
+Functions accept a list of arguments & return a list. You can think of functions as lists waiting to be evaluated.
 
-Lists can be manipulated with many of the same functions + operators as arrays.
+Using spaces to seperate arguments is syntactic sugar only.
 
 ```fl
-(4 5 6).2               # 6
-(1 2 3) -> map \(_ * 2) # 2 4 6
+let add <- (_0, _1)
+
+add 1 5    # 6
+add (1, 5) # 6
+
+```
+
+A list containing one value is treated like a value.
+
+```fl
+(1) + 2    # 3
+(1, 2) + 4 # will not compile
+```
+
+Lists can be converted to arrays.
+
+```fl
+(1 2 3) ->
+  toArray ->
+  map \(_ * 2) ->
+  toList           # (2, 4, 6)
 ```

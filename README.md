@@ -36,25 +36,25 @@ import {querySelector, mount, Element} from '@fleek/dom'
 importSyntax {tags} from '@fleek/dom'
 
 : Stream (Number)
-let reducer <- ${0}
+let state <- ${0}
 
 : Number => Element
 let Counter <- \(state), (
   div
-    button {onClick: \($reducer <-- \(_ - 1))} '-'
+    button {onClick: \($state <-- \(_ - 1))} '-'
     div state
-    button {onClick: \($reducer <-- \(_ + 1))} '+'
+    button {onClick: \($state <-- \(_ + 1))} '+'
 )
 
 : Element => ()
 let render <- \(view), (
   mount
-    querySelector `body`
+    querySelector 'body'
     view
 )
 
 : Stream ()
-reducer -> Counter -> render
+state -> Counter -> render
 ```
 
 ## Inspirations
